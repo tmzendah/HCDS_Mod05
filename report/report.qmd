@@ -6,8 +6,6 @@ author:
     affiliation: "Department of Continuing Education, University of Cambridge"
     email: "tm922@cam.ac.uk"
 
-date: today
-
 abstract: |
   **Background:** Automated Kellgren-Lawrence (KL) grading of knee osteoarthritis using deep learning has achieved high overall accuracy in published studies. However, grade-specific performance variation and the clinical validity of model attention patterns remain underexplored.
   
@@ -28,18 +26,8 @@ keywords:
   - radiographer
 
 format:
-  pdf:
-    documentclass: article
-    geometry: margin=2.5cm
-    fontsize: 11pt
-    linestretch: 1.5
-    keep-tex: false
-    number-sections: true
-  html:
-    toc: true
-    toc-depth: 3
-    number-sections: true
-    theme: cosmo
+  plos-pdf: default
+  plos-html: default
 
 bibliography: references.bib
 csl: vancouver.csl
