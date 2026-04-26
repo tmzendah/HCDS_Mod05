@@ -148,7 +148,7 @@ The dataset is publicly available at: <https://www.kaggle.com/datasets/shashwatw
 
 ## Code availability
 
-All code is available at: \[your GitHub URL\]
+All code is available at: <https://github.com/tmzendah/HCDS_Mod05>
 
 ## Competing interests
 
