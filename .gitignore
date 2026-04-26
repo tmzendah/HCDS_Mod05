@@ -1,0 +1,20 @@
+# Python
+env/
+__pycache__/
+*.pyc
+*.pyo
+
+# Quarto
+/.quarto/
+**/*.quarto_ipynb
+*.html
+HCDS_Mod05_files/
+
+# Data — too large for GitHub
+data/
+
+# R
+.Rproj.user/
+
+# macOS
+.DS_Store

@@ -1,0 +1,173 @@
+---
+title: "Grade-Specific Performance Failure and Clinical Attention Audit in Automated Knee Osteoarthritis Grading: A Radiographer-Led Explainability Study"
+
+author:
+  - name: "Talita Mzendah"
+    affiliation: "Department of Continuing Education, University of Cambridge"
+    email: "tm922@cam.ac.uk"
+
+date: today
+
+abstract: |
+  **Background:** Automated Kellgren-Lawrence (KL) grading of knee osteoarthritis using deep learning has achieved high overall accuracy in published studies. However, grade-specific performance variation and the clinical validity of model attention patterns remain underexplored.
+  
+  **Methods:** A ResNet50 convolutional neural network was trained on 5,778 knee radiographs from the public Knee Osteoarthritis Dataset with Severity Grading using transfer learning and weighted loss functions to address class imbalance. Per-grade performance metrics were calculated for all five KL grades. Grad-CAM attention maps were generated for a stratified random sample of 100 images and assessed against a pre-defined anatomical plausibility checklist by a qualified research radiographer.
+  
+  **Results:** To be completed after full training.
+  
+  **Conclusions:** To be completed after full training.
+
+keywords: 
+  - knee osteoarthritis
+  - Kellgren-Lawrence grading
+  - deep learning
+  - convolutional neural network
+  - explainability
+  - Grad-CAM
+  - subgroup analysis
+  - radiographer
+
+format:
+  pdf:
+    documentclass: article
+    geometry: margin=2.5cm
+    fontsize: 11pt
+    linestretch: 1.5
+    keep-tex: false
+    number-sections: true
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+
+bibliography: references.bib
+csl: vancouver.csl
+
+execute:
+  echo: false
+  warning: false
+  message: false
+
+jupyter: python3
+---
+
+# Background
+
+Knee osteoarthritis (KOA) affects approximately 250 million people globally [@who2023] and is a leading cause of disability in older adults.
+
+# Methods
+
+## Dataset
+
+The Knee Osteoarthritis Dataset with Severity Grading was obtained from Kaggle [@shashwat2021], licensed under CC BY 4.0. The dataset contains 9,786 plain radiograph images.
+
+## Model Architecture
+
+ResNet50 pretrained on ImageNet was selected based on its established performance in musculoskeletal radiograph classification [@olsson2021; @sharma2025].
+
+## Training
+
+The table below summarises the key hyperparameters and configuration settings used to train the model.
+
+```{python}
+#| label: tbl-config
+#| tbl-cap: "Model training configuration"
+
+import pandas as pd
+
+config = {
+    "Parameter": ["Architecture", "Epochs", "Learning rate",
+                   "Batch size", "Image size", "Optimiser"],
+    "Value": ["ResNet50", "50", "0.001", "32",
+               "224×224px", "Adam"]
+}
+
+pd.DataFrame(config)
+```
+
+# Results
+
+## Overall Performance
+
+The figure below shows how training and validation loss changed across epochs, indicating model convergence behaviour.
+
+```{python}
+#| label: fig-training
+#| fig-cap: "Training and validation loss across epochs"
+
+from PIL import Image
+import matplotlib.pyplot as plt
+
+img = Image.open("../outputs/figures/training_history.png")
+plt.imshow(img)
+plt.axis("off")
+plt.show()
+```
+
+## Grade-Specific Subgroup Analysis
+
+The table below presents precision, recall, and F1-score for each Kellgren-Lawrence grade on the held-out test set.
+
+```{python}
+#| label: tbl-grades
+#| tbl-cap: "Per-grade classification metrics on test set"
+
+import pandas as pd
+
+df = pd.read_csv("../outputs/metrics/grade_metrics.csv")
+df
+```
+
+## Attention Map Audit
+
+The figure below displays Grad-CAM attention maps for representative cases from each KL grade, highlighting the image regions most influential in the model's prediction.
+
+```{python}
+#| label: fig-gradcam
+#| fig-cap: "Grad-CAM attention maps for representative cases per KL grade"
+
+from PIL import Image
+import matplotlib.pyplot as plt
+
+img = Image.open("../outputs/figures/gradcam_grid.png")
+plt.imshow(img)
+plt.axis("off")
+plt.show()
+```
+
+# Discussion
+
+## Grade-Specific Performance Failures
+
+## Clinical Interpretation of Attention Patterns
+
+## Limitations
+
+## Future Directions
+
+# Conclusions
+
+# Declarations
+
+## Ethics approval
+
+This study used publicly available, anonymised data (CC BY 4.0). No ethics approval was required.
+
+## Availability of data and materials
+
+The dataset is publicly available at: <https://www.kaggle.com/datasets/shashwatwork/knee-osteoarthritis-dataset-with-severity>
+
+## Code availability
+
+All code is available at: \[your GitHub URL\]
+
+## Competing interests
+
+The author declares no competing interests.
+
+## Acknowledgements
+
+This work was conducted as part of the MSt Healthcare Data Science programme at the University of Cambridge.
+
+# References
