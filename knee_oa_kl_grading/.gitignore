@@ -1,0 +1,27 @@
+# Data — never commit raw or processed images
+data/
+
+# Model outputs — .pth files are too large for GitHub
+outputs/checkpoints/
+
+# Rendered/generated report artefacts
+report/report.html
+report/report.tex
+report/report.log
+report/report_files/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Conda / pip
+*.egg

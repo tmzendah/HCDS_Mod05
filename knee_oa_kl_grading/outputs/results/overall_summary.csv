@@ -1,0 +1,2 @@
+overall_accuracy,overall_auc_macro,best_epoch,best_val_loss,best_val_acc,total_test_images
+58.6353,0.865,34,0.9295,58.7167,1656

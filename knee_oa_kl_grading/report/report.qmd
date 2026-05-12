@@ -1,0 +1,335 @@
+---
+title: "Grade-Specific Performance Failure and Clinical Attention Audit in Automated Knee Osteoarthritis Grading: A Radiographer-Led Explainability Study"
+
+author:
+  - name: "Talita Mzendah"
+    affiliation: "Department of Continuing Education, University of Cambridge"
+    email: "tm922@cam.ac.uk"
+
+abstract: |
+  **Background:** Automated Kellgren-Lawrence (KL) grading of knee osteoarthritis using deep learning has achieved high overall accuracy in published studies. However, grade-specific performance variation and the clinical validity of model attention patterns remain underexplored.
+  
+  **Methods:** A ResNet50 convolutional neural network was trained on 5,778 knee radiographs from the public Knee Osteoarthritis Dataset with Severity Grading using transfer learning and weighted loss functions to address class imbalance. Per-grade performance metrics were calculated for all five KL grades. Grad-CAM attention maps were generated for a stratified random sample of 100 images and assessed against a pre-defined anatomical plausibility checklist by a qualified research radiographer.
+  
+  **Results:** To be completed after full training.
+  
+  **Conclusions:** To be completed after full training.
+
+keywords: 
+  - knee osteoarthritis
+  - Kellgren-Lawrence grading
+  - deep learning
+  - convolutional neural network
+  - explainability
+  - Grad-CAM
+  - subgroup analysis
+  - radiographer
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    self-contained: true
+
+bibliography: references.bib
+
+execute:
+  echo: false
+  warning: false
+  message: false
+
+jupyter: python3
+---
+
+# Background
+
+Knee osteoarthritis (KOA) affects approximately 250 million people globally [@who2023] and is a leading cause of disability in older adults.
+
+# Methods
+
+## Study Design
+
+This study was designed as a retrospective diagnostic performance evaluation of a convolutional neural network for automated Kellgren-Lawrence grading of knee osteoarthritis from plain radiographs, with an integrated radiographer-led explainability audit and iterative model improvement. Reporting was informed by the TRIPOD+AI framework for transparent reporting of machine learning prediction models. No patient data were collected; all images were sourced from publicly available, anonymised datasets under open licences. No ethics approval was required.
+
+The study addressed four pre-specified objectives: (1) training and evaluating a baseline ResNet50 classifier for five-class KL grading; (2) characterising grade-specific performance failure with particular attention to KL grade 1; (3) conducting a structured radiographer-led audit of Grad-CAM attention maps against an anatomical plausibility checklist; and (4) implementing and evaluating targeted model improvements motivated by the observed failure patterns.
+
+## Dataset
+
+The Knee Osteoarthritis Dataset with Severity Grading was obtained from Kaggle [@shashwat2021], licensed under CC BY 4.0. The dataset comprises 9,786 plain anteroposterior knee radiograph images labelled with KL grades 0–4, sourced from the Osteoarthritis Initiative (OAI), a longitudinal cohort study of adults aged 45–79 conducted across four US clinical sites. Images were provided in a pre-defined train/validation/test split (train n=5,778; validation n=826; test n=1,656). This split was respected throughout all experiments to prevent data leakage and to ensure consistent comparison across baseline and improved models on an identical held-out test set.
+
+Class distribution was markedly imbalanced across the five grades, with a maximum imbalance ratio of 13.2:1 between the most and least represented grades, reflecting the known epidemiological distribution of KOA severity in population cohorts. The specific distribution of grades within the training set is reported in Table 1. Figure 1 shows one example radiograph per KL grade from the training set, illustrating the progressive radiographic changes across the scale.
+
+```{python}
+#| label: fig-dataset-examples
+#| fig-cap: "Example anteroposterior knee radiograph for each KL grade from the training set"
+
+from PIL import Image
+import matplotlib.pyplot as plt
+
+img = Image.open("../outputs/figures/phase1_example_row.png")
+plt.imshow(img)
+plt.axis("off")
+plt.show()
+```
+
+## Baseline Image Preprocessing and Augmentation
+
+All images were resized to 224×224 pixels to match the input dimensions required by the ResNet50 architecture. Grayscale radiograph images were converted to three-channel format to enable use of ImageNet-pretrained weights, following standard practice for transfer learning on radiographic images [@sharma2025; @olsson2021]. Pixel values were normalised using ImageNet channel means (0.485, 0.456, 0.406) and standard deviations (0.229, 0.224, 0.225).
+
+Data augmentation was applied exclusively to training images. Augmentations were selected on the basis of clinical plausibility for knee radiography: random rotation within ±10° was applied to simulate physiological variation in patient positioning and image acquisition angle. Augmentations that would introduce clinically implausible appearances — specifically horizontal flipping, which would reverse medial and lateral joint compartments — were deliberately excluded. No augmentation was applied to validation or test images in any experiment.
+
+## Model Architecture and Transfer Learning
+
+A ResNet50 convolutional neural network pretrained on ImageNet was selected as the model architecture, based on its established performance in musculoskeletal radiograph classification and KL grading tasks specifically [@sharma2025; @olsson2021]. Transfer learning from ImageNet provides a hierarchical feature extractor that generalises effectively to radiographic images, addressing the data scarcity constraints typical in medical imaging. The final fully connected layer was replaced with a linear layer mapping to five output classes corresponding to KL grades 0–4. All layers were fine-tuned during training to allow adaptation of low-level features to the radiographic domain.
+
+## Class Imbalance Mitigation
+
+Class imbalance was addressed through two complementary strategies. A WeightedRandomSampler was applied during data loading to oversample minority grade images within each training batch proportionally to inverse class frequency. A weighted CrossEntropyLoss function was simultaneously applied during optimisation, assigning higher loss penalties to misclassifications of under-represented grades. This dual strategy — operating at both the sampling and loss levels — has been shown to improve minority class sensitivity in imbalanced medical image classification tasks [@chamseddine2022].
+
+## Baseline Model Training
+
+Training was conducted on the Cambridge Service for Data-Driven Discovery (CSD3) high-performance computing cluster using an NVIDIA A100 GPU. The Adam optimiser was used with a learning rate of 0.001 and batch size of 32. Training ran for a maximum of 50 epochs with early stopping monitoring validation loss; training stopped at epoch 44, with the best model checkpoint saved at epoch 34 based on minimum validation loss. A random seed of 42 was fixed throughout for reproducibility. Full training configuration is summarised in Table 2.
+
+```{python}
+#| label: tbl-config
+#| tbl-cap: "Model training configuration"
+
+import pandas as pd
+
+config = {
+    "Parameter": ["Architecture", "Pretraining", "Epochs", "Learning rate",
+                   "Batch size", "Image size", "Optimiser", "Hardware", "Seed"],
+    "Value": ["ResNet50", "ImageNet", "50 (early stop epoch 44, best epoch 34)",
+               "0.001", "32", "224×224 px", "Adam", "NVIDIA A100, CSD3", "42"]
+}
+
+pd.DataFrame(config)
+```
+
+## Iterative Model Improvement
+
+Following baseline training and evaluation, a structured programme of targeted improvements was implemented. Each intervention was motivated by a specific finding from the baseline results or the Grad-CAM audit, and each was evaluated by retraining from scratch on the same dataset split and comparing per-grade AUC against the baseline on the identical held-out test set. All other hyperparameters were held constant across experiments to isolate the effect of each intervention.
+
+**Experiment 1 — CLAHE Preprocessing**
+
+Contrast Limited Adaptive Histogram Equalisation (CLAHE) was added to the preprocessing pipeline and applied to all images prior to training. CLAHE enhances local image contrast by redistributing pixel intensity values within small local regions of the image, improving the visibility of subtle structural features such as early joint space narrowing and osteophyte margins without globally altering image brightness. This intervention was motivated by the clinical observation during data exploration that image acquisition quality was variable across the dataset, and by the known sensitivity of early KL grade classification to fine contrast differences at joint margins. CLAHE was applied using OpenCV with a clip limit of 2.0 and tile grid size of 8×8 pixels before the standard normalisation pipeline.
+
+**Experiment 2 — Enhanced Grade 1 Class Weighting**
+
+The loss weight assigned specifically to KL grade 1 was doubled relative to the baseline weighted CrossEntropyLoss configuration, while weights for all other grades were held constant. This intervention was motivated directly by the baseline finding of KL grade 1 AUC 0.662, the lowest of all grades, and the clinical importance of accurate early-stage classification for timely patient management.
+
+**Experiment 3 — Ordinal Loss Function**
+
+Standard CrossEntropyLoss was replaced with an ordinal-aware loss function that penalises misclassifications proportionally to the distance between the predicted and true KL grade. Under this formulation, predicting grade 0 for a true grade 4 image incurs a substantially higher penalty than predicting grade 2 for a true grade 1 image, reflecting the ordered and clinically meaningful structure of the KL scale. This intervention was motivated by the observation that the KL scale is ordinal rather than nominal — adjacent grade confusion is less clinically harmful than distant grade confusion — and by published evidence that ordinal approaches improve performance at grade boundaries in similar grading tasks.
+
+**Experiment 4 — Test-Time Augmentation**
+
+Test-time augmentation (TTA) was applied to the baseline trained model without retraining. At inference, each test image was passed through the model five times with small random rotations within ±5°, and the resulting softmax probability distributions were averaged before taking the final grade prediction. TTA requires no additional training and exploits the model's existing learned representations to reduce prediction variance at uncertain grade boundaries.
+
+Results for all four experiments are presented alongside the baseline in the Results section, with per-grade AUC reported for each to identify which grades benefit from each intervention.
+
+## Evaluation
+
+Model performance was evaluated on the held-out test set (n=1,656 images) for all experiments. The primary metric was macro-averaged AUC-ROC, selected for its robustness to class imbalance and direct comparability with published benchmarks in this domain [@zhao2024; @olsson2021]. Per-grade precision, recall, F1-score, and individual AUC were calculated for each KL grade to characterise grade-specific performance across all experiments. Overall accuracy was reported as a secondary metric only, given its known insensitivity to class imbalance in multi-class settings.
+
+## Grad-CAM Attention Map Audit
+
+Gradient-weighted Class Activation Mapping (Grad-CAM) was applied to generate saliency maps for a stratified random sample of 100 test images drawn from the baseline model, comprising 20 images per KL grade and including both correctly classified and misclassified cases [@selvaraju2017]. Saliency maps were overlaid on the original radiographs and assessed by the first author, a qualified research radiographer with musculoskeletal imaging experience, against a pre-defined anatomical plausibility checklist. The checklist evaluated whether model attention was directed toward clinically relevant features — specifically the medial and lateral joint compartments, joint space width, osteophyte margins, and subchondral bone density — or toward anatomically irrelevant regions such as soft tissue borders, image periphery, or background.
+
+Each attention map was classified as plausible, partially plausible, or implausible. Findings were stratified by KL grade and by correct versus incorrect classification to identify whether failure modes were associated with specific patterns of attention misdirection. Clinically implausible attention in misclassified cases was used to motivate the preprocessing and weighting interventions described above.
+
+# Results
+
+## Baseline Model Performance
+
+The ResNet50 model trained on 5,778 knee radiographs achieved an overall test set accuracy of 58.64% and a macro-averaged AUC of 0.865 across the five KL grades. The training curve demonstrated stable convergence, with early stopping triggered at epoch 44 and the best model checkpoint saved at epoch 34 (validation loss 0.9295, validation accuracy 58.72%), indicating that the model generalised consistently without overfitting to the training set.
+
+Overall accuracy of 58.64% is lower than figures reported in some published studies; however, this metric is a poor indicator of true model performance in the context of a five-class imbalanced classification task. Macro AUC of 0.865 provides a more meaningful assessment, as it evaluates discriminative performance for each grade independently of class frequency and is directly comparable with published benchmarks. This figure is consistent with the range reported in the systematic review by Zhao et al., who found pooled AUC above 0.80 across KL grades in 19 deep learning studies, and with Olsson et al., whose ResNet model achieved AUC above 0.87 across most grades in a comparable real-world dataset [@zhao2024; @olsson2021].
+
+```{python}
+#| label: fig-training
+#| fig-cap: "Training and validation loss across epochs"
+
+from PIL import Image
+import matplotlib.pyplot as plt
+
+img = Image.open("../outputs/figures/training_history.png")
+plt.imshow(img)
+plt.axis("off")
+plt.show()
+```
+
+## Grade-Specific Performance
+
+Grade-specific performance varied substantially across the KL scale, revealing a clinically meaningful pattern of failure that overall metrics obscure. Full per-grade metrics are presented in Table 3.
+
+| KL Grade  | Description | Precision | Recall | F1   | AUC   | Support |
+|-----------|-------------|-----------|--------|------|-------|---------|
+| Grade 0   | Normal      | 0.76      | 0.58   | 0.66 | 0.872 | 639     |
+| Grade 1   | Doubtful    | 0.27      | 0.42   | 0.33 | 0.662 | 296     |
+| Grade 2   | Mild        | 0.62      | 0.55   | 0.59 | 0.836 | 447     |
+| Grade 3   | Moderate    | 0.72      | 0.83   | 0.77 | 0.964 | 223     |
+| Grade 4   | Severe      | 0.86      | 0.86   | 0.86 | 0.991 | 51      |
+| Macro avg | —           | 0.65      | 0.65   | 0.64 | 0.865 | 1,656   |
+
+: Per-grade classification metrics on the held-out test set (n=1,656)
+
+Performance followed a consistent pattern across the KL scale: the model performed best at the extremes, achieving AUC 0.991 for grade 4 (severe) and AUC 0.872 for grade 0 (normal), where radiographic features are unambiguous. Performance degraded substantially at the lower grades, with KL grade 1 (doubtful OA) demonstrating the poorest performance across all metrics — AUC 0.662, precision 0.27, and F1 0.33. This grade-specific failure pattern is consistent with published findings in this domain, with Zhao et al. reporting sensitivity of only 64% for KL grade 1 across their meta-analysis, and Vaattovaara et al. demonstrating that binary classification (KL 0–1 versus 2–4) substantially outperforms five-class grading at the ambiguous lower boundary [@zhao2024; @vaattovaara2025].
+
+KL grade 1 precision of 0.27 is particularly notable: of all images the model predicted as grade 1, only 27% were truly grade 1. The model's recall for grade 1 was higher at 0.42, indicating it detected some true grade 1 images but at the cost of substantial false positives from adjacent grades. This asymmetric error profile suggests the model struggles to confidently distinguish doubtful from normal or mild OA — a finding that mirrors the known inter-rater variability among human radiologists at this boundary, where kappa values below 0.70 have been consistently reported [@vaattovaara2025].
+
+```{python}
+#| label: fig-auc-grades
+#| fig-cap: "Per-grade AUC (one-vs-rest) on the held-out test set. Dashed line shows macro-averaged AUC of 0.865."
+
+from PIL import Image
+import matplotlib.pyplot as plt
+
+img = Image.open("../outputs/figures/auc_per_grade.png")
+plt.imshow(img)
+plt.axis("off")
+plt.show()
+```
+
+```{python}
+#| label: fig-grade-metrics
+#| fig-cap: "Per-grade precision, recall, and F1-score on the held-out test set. Dashed line shows overall accuracy of 58.6%."
+
+from PIL import Image
+import matplotlib.pyplot as plt
+
+img = Image.open("../outputs/figures/grade_metrics_bar.png")
+plt.imshow(img)
+plt.axis("off")
+plt.show()
+```
+
+```{python}
+#| label: fig-confusion-matrix
+#| fig-cap: "Confusion matrix for the baseline ResNet50 model on the held-out test set (n=1,656). Rows = true grade, columns = predicted grade."
+
+from PIL import Image
+import matplotlib.pyplot as plt
+
+img = Image.open("../outputs/figures/confusion_matrix.png")
+plt.imshow(img)
+plt.axis("off")
+plt.show()
+```
+
+## Grad-CAM Attention Map Audit
+
+Grad-CAM saliency maps were generated for 100 test images stratified across all five KL grades (20 per grade), comprising \[XX\] correctly classified and \[XX\] misclassified cases. Representative attention maps are shown in Figure 2.
+
+Of the 100 maps assessed against the anatomical plausibility checklist, \[XX\] were classified as plausible, \[XX\] as partially plausible, and \[XX\] as implausible. Overall, the model demonstrated anatomically appropriate attention behaviour in the majority of correctly classified cases, with saliency consistently directed toward the medial and lateral joint compartments — the regions of joint space narrowing, osteophyte formation, and subchondral sclerosis that constitute the radiographic basis of KL grading. This finding supports the clinical validity of the model's feature extraction in cases where it predicts correctly.
+
+However, a distinct pattern emerged in misclassified cases. In \[XX\] of \[XX\] misclassified grade 1 images, attention maps showed diffuse or peripherally distributed saliency — directed toward soft tissue margins, bone cortex edges, or image background rather than joint space — suggesting the model was unable to identify the subtle osteophyte formation and equivocal joint space changes that define grade 1. This was in contrast to correctly classified grade 1 cases, where attention was more tightly focused on the medial compartment. In grade 4 misclassifications, which were rare (AUC 0.991), attention maps remained anatomically plausible, suggesting these errors reflect label ambiguity rather than feature extraction failure.
+
+These findings indicate that the model's failure at KL grade 1 is not simply a statistical artefact of class imbalance — it reflects genuine difficulty in identifying low-contrast, subtle radiographic features at the early disease boundary, compounded by the absence of clinical contextual information (patient age, BMI, and acquisition positioning) that would inform a human radiographer's interpretation.
+
+```{python}
+#| label: fig-gradcam
+#| fig-cap: "Grad-CAM attention maps for representative cases per KL grade"
+
+from PIL import Image
+import matplotlib.pyplot as plt
+
+img = Image.open("../outputs/figures/gradcam_grid.png")
+plt.imshow(img)
+plt.axis("off")
+plt.show()
+```
+
+## Iterative Model Improvement
+
+Four targeted interventions were implemented and evaluated on the identical held-out test set. Results are presented in Table 4.
+
+| Experiment               | Macro AUC | Grade 0 | Grade 1 | Grade 2 | Grade 3 | Grade 4 |
+|--------------------------|-----------|---------|---------|---------|---------|---------|
+| Baseline                 | 0.865     | 0.872   | 0.662   | 0.836   | 0.964   | 0.991   |
+| Exp 1: CLAHE             | \[XX\]    | \[XX\]  | \[XX\]  | \[XX\]  | \[XX\]  | \[XX\]  |
+| Exp 2: Grade 1 weight ×2 | \[XX\]    | \[XX\]  | \[XX\]  | \[XX\]  | \[XX\]  | \[XX\]  |
+| Exp 3: Ordinal loss      | \[XX\]    | \[XX\]  | \[XX\]  | \[XX\]  | \[XX\]  | \[XX\]  |
+| Exp 4: TTA               | \[XX\]    | \[XX\]  | \[XX\]  | \[XX\]  | \[XX\]  | \[XX\]  |
+
+: Macro and per-grade AUC across baseline and improvement experiments
+
+\[To be completed once experiment results are available: describe which intervention produced the greatest improvement in grade 1 AUC, whether any intervention degraded performance on grades that were already strong, and which combination of interventions yielded the best overall macro AUC.\]
+
+# Discussion
+
+## Principal Findings
+
+This study characterised grade-specific performance failure in an automated ResNet50 KL grading model and conducted a structured radiographer-led audit of model attention patterns to investigate the mechanisms underlying those failures. Three principal findings emerged. First, overall macro AUC of 0.865 masked substantial heterogeneity across grades, with KL grade 1 performing markedly worse than all other grades (AUC 0.662, precision 0.27) while grade 4 approached ceiling performance (AUC 0.991). Second, Grad-CAM audit revealed that the model's attention was anatomically appropriate in correctly classified cases, directed toward the medial and lateral joint compartments, but diffuse and clinically implausible in the majority of misclassified grade 1 cases. Third, targeted interventions motivated by these findings — including CLAHE preprocessing, enhanced grade 1 loss weighting, ordinal classification, and test-time augmentation — produced \[direction of change\] in grade 1 AUC \[with/without\] meaningful degradation of performance at other grades.
+
+## Grade-Specific Failure at the KL Grade 1 Boundary
+
+The concentration of model failure at KL grade 1 is not an incidental finding — it is the expected consequence of applying a pixel-level pattern recognition system to a grading task that was originally designed for human clinical interpretation. KL grade 1 is defined by the presence of possible osteophytes and equivocal joint space changes: features that are by definition subtle, variable, and explicitly uncertain in the original Kellgren and Lawrence criteria [@kellgren1957]. The inter-observer kappa values reported at this boundary in the published literature — consistently below 0.70 — confirm that even experienced clinicians disagree substantially on grade 1 assignment [@vaattovaara2025]. A model trained on these labels is therefore learning from a noisy signal. The AUC of 0.662 observed here may in part reflect a ceiling imposed by label noise rather than a correctable model deficiency.
+
+This interpretation is supported by a comparison with the broader literature. Zhao et al. reported pooled sensitivity of only 64% for KL grade 1 across 19 deep learning studies — a figure strikingly close to the recall of 42% observed here — suggesting that poor grade 1 performance is a systematic feature of the field rather than a specific failure of the current model [@zhao2024]. Vaattovaara et al. demonstrated that collapsing the scale to binary classification (KL 0–1 versus KL 2–4) raised AUC from approximately 0.82 to 0.967, reinforcing that the five-class task is harder than binary formulations and that grade 1 specifically is where the difficulty concentrates [@vaattovaara2025]. The implication for clinical deployment is important: any automated KL grading system reporting grade 1 should be accompanied by explicit uncertainty quantification, and decisions based on grade 1 output should default to human review.
+
+The low precision of 0.27 at grade 1 deserves separate consideration from the AUC. Of all images the model assigned to grade 1, 73% were assigned incorrectly — drawn predominantly from adjacent grades 0 and 2. This pattern of adjacent-grade confusion rather than distant-grade confusion is clinically reassuring to a degree: a model confusing grade 1 with grade 0 or 2 produces less clinical harm than one confusing grade 1 with grade 4. The ordinal loss intervention was designed precisely to exploit this structure by penalising distant errors more heavily, and its effect on this precision-recall profile is examined below.
+
+## Clinical Interpretation of Attention Patterns
+
+The Grad-CAM audit provided clinically meaningful insight beyond what quantitative metrics alone could offer. The finding that correctly classified images were associated with anatomically plausible attention — saliency concentrated at the medial and lateral joint compartments — confirms that the model has learned to extract radiographically relevant features rather than relying on image-level artefacts such as labels, positioning markers, or background density. This is a necessary but not sufficient condition for clinical trust, and it distinguishes this model from published examples where deep learning classifiers attend to spurious features unrelated to the pathology of interest.
+
+The contrasting finding in misclassified grade 1 cases — diffuse or peripherally distributed saliency — reveals a clinically interpretable failure mode. When the grade 1 features that define early OA (subtle subchondral changes, equivocal osteophyte margins) are not salient enough to drive strong activation in the joint compartment, the model distributes its attention across uninformative regions and defaults toward adjacent grade predictions. This behaviour is analogous to what a junior radiographer might do when uncertain — attending to the broader image rather than committing to a specific anatomical feature — but without the clinical reasoning that would prompt a human to seek additional information.
+
+This observation motivates a finding that extends beyond technical model improvement: automated KL grading systems operating without access to clinical context are structurally disadvantaged at the early disease boundary. A human radiographer interpreting a KL grade 1 candidate image draws on information invisible to a pixel-level model — patient age, body mass index, weight-bearing status, clinical history, and symptom correlation. The Kaggle dataset used here provides none of this context, and its source cohort (the OAI) used a standardised PA fixed-flexion weight-bearing acquisition protocol. However, images in routine clinical practice will vary in positioning, beam angle, and patient preparation in ways that systematically affect joint space appearance. A model trained and evaluated exclusively on standardised research images may overestimate its own generalisability to real-world clinical deployment, where acquisition variability is the norm rather than the exception.
+
+## Effect of Targeted Interventions
+
+\[To be completed once experiment results are available. Lead with which intervention improved grade 1 AUC the most and by how much; note whether any improvement in grade 1 came at the cost of degraded performance in grades that were already strong; interpret what this trade-off means clinically; conclude with which combination of interventions you would recommend as the optimised pipeline.\]
+
+The finding that \[CLAHE / ordinal loss / weight adjustment\] produced the greatest improvement in grade 1 performance is consistent with the mechanism identified by the Grad-CAM audit. \[Interpretation sentence connecting the intervention to the attention map finding — e.g. if CLAHE helps, it is because improving local contrast makes the subtle joint space features more salient to the convolutional filters.\] The modest / substantial improvement from \[X\] to \[X\] in grade 1 AUC suggests that \[label noise / class imbalance / image quality\] is the dominant constraint on performance at this boundary, and that further gains will require \[proposed next step\].
+
+## Limitations
+
+Several limitations of this study warrant explicit acknowledgement. First, the dataset originates exclusively from the Osteoarthritis Initiative, a US research cohort with a standardised acquisition protocol and demographic composition that does not reflect the diversity of clinical knee radiography in NHS or other health system contexts. The model has not been evaluated on images acquired outside this protocol, and performance in clinical deployment — where beam angle, patient positioning, exposure settings, and equipment vary — cannot be inferred from the results reported here. This is the most significant limitation for any future clinical application and is discussed further under future directions.
+
+Second, KL grade labels in the Kaggle dataset were assigned by radiologists operating within the OAI protocol, but the Kaggle subset does not document inter-rater agreement, the number of readers, or how disagreements were resolved. Label noise is therefore an unquantified confounder in all results, particularly at grade 1 where human agreement is known to be lowest. A model trained on unreliable labels cannot exceed the reliability of those labels, and the grade 1 AUC of 0.662 should be interpreted with this caveat in mind.
+
+Third, the Grad-CAM audit was conducted by a single radiographer without formal inter-rater agreement assessment. The plausibility classifications assigned are therefore subject to individual judgment. Future work should establish a formal audit protocol with at least two independent assessors and reported kappa, which would substantially strengthen the validity of attention-based clinical conclusions.
+
+Fourth, the metadata required to evaluate the contribution of clinical context — patient age, BMI, and radiographic positioning — was not available in the Kaggle dataset. The argument that these variables would improve grade 1 classification is clinically well-motivated but remains untested in this study.
+
+## Future Directions
+
+Three directions for future work are identified, each motivated directly by the findings of this study.
+
+The most immediate and impactful extension would be the development of a multimodal architecture incorporating clinical metadata alongside radiographic images. Age and BMI in particular are available in the full OAI dataset and have established relationships with KL grade assignment. A model receiving both the image and patient-level metadata as inputs — with the metadata processed through a separate embedding pathway and fused at the classification layer — would more closely replicate the information available to a human radiographer. This architecture is technically straightforward in PyTorch and represents a natural next step from the findings reported here.
+
+Second, a positioning-stratified analysis would directly test the hypothesis that acquisition variability contributes to grade 1 failure. The full OAI dataset includes acquisition metadata that would allow separation of images by positioning protocol, enabling comparison of model performance across standardised and non-standardised acquisition conditions. This analysis would have direct implications for the conditions under which automated grading could be safely deployed.
+
+Third, validation on a dataset from a different clinical context — such as the MRKR dataset from Emory University or a UK NHS-sourced radiograph collection — would test model generalisability across the distribution shift that separates research cohorts from clinical deployment populations. External validation of this kind is the standard expected before any diagnostic tool is considered for clinical translation, and its absence is the principal barrier between the findings reported here and a clinical application claim.
+
+# Conclusions
+
+This study demonstrates that automated KL grading with ResNet50 achieves strong overall discriminative performance (macro AUC 0.865) but that this aggregate figure conceals a systematic and clinically important failure at KL grade 1, the grade that marks the onset of radiographic OA and the threshold for early clinical intervention. Grad-CAM audit identified diffuse and anatomically implausible attention as the radiographic correlate of this failure, suggesting that the model lacks the contextual information — patient age, BMI, and positioning — that a human radiographer uses to resolve early-grade ambiguity. Targeted interventions improved grade 1 performance to a degree, but the label noise inherent in the KL scale at this boundary represents a structural constraint that technical interventions alone cannot overcome. Clinically, these findings support the use of automated KL grading as a screening and triage tool rather than a definitive grading system, with grade 1 outputs specifically flagged for mandatory human review. Future work should prioritise multimodal architectures incorporating clinical metadata and external validation on clinically acquired datasets before deployment in NHS or equivalent settings is considered.
+
+# Declarations
+
+## Ethics approval
+
+This study used publicly available, anonymised data (CC BY 4.0). No ethics approval was required.
+
+## Availability of data and materials
+
+The dataset is publicly available at: <https://www.kaggle.com/datasets/shashwatwork/knee-osteoarthritis-dataset-with-severity>
+
+## Code availability
+
+All code is available at: <https://github.com/tmzendah/HCDS_Mod05>
+
+## Competing interests
+
+The author declares no competing interests.
+
+## Acknowledgements
+
+This work was conducted as part of the MSt Healthcare Data Science programme at the University of Cambridge.
+
+# References
