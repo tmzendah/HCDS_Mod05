@@ -96,7 +96,7 @@ Class imbalance was addressed through two complementary strategies. A WeightedRa
 
 ## Phase 1: Architectural Comparison
 
-Both ResNet50 and EfficientNet-B0 were trained under identical conditions to isolate architecture as the sole variable of comparison. The Adam optimiser was used with a learning rate of 0.001, batch size of 32, and a maximum of 50 epochs with early stopping monitoring validation loss. A random seed of 42 was fixed throughout for reproducibility. Training was conducted on the Cambridge Service for Data-Driven Discovery (CSD3) high-performance computing cluster using an NVIDIA A100 GPU. Full configuration is summarised in Table 2.
+Both ResNet50 and EfficientNet-B0 were trained under identical conditions to isolate architecture as the sole variable of comparison. The Adam optimiser was used with a learning rate of 0.001, batch size of 32, and a maximum of 50 epochs with early stopping monitoring validation loss. To assess model stability, training was repeated across three random seeds (42, 123, 456) for both architectures; per-grade AUC is reported as mean ± standard deviation across seeds. Training was conducted on the Cambridge Service for Data-Driven Discovery (CSD3) high-performance computing cluster using an NVIDIA A100 GPU. Full configuration is summarised in Table 2.
 
 ```{python}
 #| label: tbl-config
@@ -106,9 +106,9 @@ import pandas as pd
 
 config = {
     "Parameter": ["Architectures", "Pretraining", "Epochs", "Learning rate",
-                   "Batch size", "Image size", "Optimiser", "Hardware", "Seed"],
+                   "Batch size", "Image size", "Optimiser", "Hardware", "Seeds"],
     "Value": ["ResNet50, EfficientNet-B0", "ImageNet", "50 (early stopping on validation loss)",
-               "0.001", "32", "224×224 px", "Adam", "NVIDIA A100, CSD3", "42"]
+               "0.001", "32", "224×224 px", "Adam", "NVIDIA A100, CSD3", "42, 123, 456"]
 }
 
 pd.DataFrame(config)
@@ -140,7 +140,7 @@ Results for all four experiments are presented alongside the baseline in the Res
 
 ## Evaluation
 
-Model performance was evaluated on the held-out test set (n=1,656 images) for all experiments. The primary metric was macro-averaged AUC-ROC, selected for its robustness to class imbalance and direct comparability with published benchmarks in this domain [@zhao2024; @olsson2021]. Per-grade precision, recall, F1-score, and individual AUC were calculated for each KL grade to characterise grade-specific performance across all experiments. Overall accuracy was reported as a secondary metric only, given its known insensitivity to class imbalance in multi-class settings.
+Model performance was evaluated on the held-out test set (n=1,656 images) for all experiments. The primary metric was macro-averaged AUC-ROC, selected for its robustness to class imbalance and direct comparability with published benchmarks in this domain [@zhao2024; @olsson2021]. Per-grade precision, recall, F1-score, and individual AUC were calculated for each KL grade to characterise grade-specific performance across all experiments. Overall accuracy was reported as a secondary metric only, given its known insensitivity to class imbalance in multi-class settings. Model comparison between ResNet50 and EfficientNet-B0 was assessed using a Wilcoxon signed-rank test applied to macro AUC scores across the three seeds (42, 123, 456), with significance threshold p < 0.05.
 
 ## Grad-CAM Attention Map Audit
 
@@ -182,7 +182,21 @@ Grade-specific performance varied substantially across the KL scale, revealing a
 | Grade 4   | Severe      | 0.86      | 0.86   | 0.86 | 0.991 | 51      |
 | Macro avg | —           | 0.65      | 0.65   | 0.64 | 0.865 | 1,656   |
 
-: Per-grade classification metrics on the held-out test set (n=1,656)
+: Per-grade classification metrics on the held-out test set — seed 42 (single-run reference)
+
+Table 4 reports AUC stability across all three seeds for both architectures.
+
+| KL Grade  | ResNet50 AUC (mean ± SD) | EfficientNet-B0 AUC (mean ± SD) |
+|-----------|--------------------------|----------------------------------|
+| Grade 0   | [XX ± XX]                | [XX ± XX]                        |
+| Grade 1   | [XX ± XX]                | [XX ± XX]                        |
+| Grade 2   | [XX ± XX]                | [XX ± XX]                        |
+| Grade 3   | [XX ± XX]                | [XX ± XX]                        |
+| Grade 4   | [XX ± XX]                | [XX ± XX]                        |
+| Macro AUC | [XX ± XX]                | [XX ± XX]                        |
+| Wilcoxon p| —                        | [XX]                             |
+
+: Per-grade AUC stability across seeds 42, 123, 456 for both architectures (n=3 runs each)
 
 Performance followed a consistent pattern across the KL scale: the model performed best at the extremes, achieving AUC 0.991 for grade 4 (severe) and AUC 0.872 for grade 0 (normal), where radiographic features are unambiguous. Performance degraded substantially at the lower grades, with KL grade 1 (doubtful OA) demonstrating the poorest performance across all metrics — AUC 0.662, precision 0.27, and F1 0.33. This grade-specific failure pattern is consistent with published findings in this domain, with Zhao et al. reporting sensitivity of only 64% for KL grade 1 across their meta-analysis, and Vaattovaara et al. demonstrating that binary classification (KL 0–1 versus 2–4) substantially outperforms five-class grading at the ambiguous lower boundary [@zhao2024; @vaattovaara2025].
 
