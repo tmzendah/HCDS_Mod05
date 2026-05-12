@@ -34,12 +34,6 @@ format:
 
 bibliography: references.bib
 
-execute:
-  echo: false
-  warning: false
-  message: false
-
-jupyter: python3
 ---
 
 # Background
@@ -58,20 +52,7 @@ The study addressed four pre-specified objectives: (1) comparing ResNet50 and Ef
 
 The Knee Osteoarthritis Dataset with Severity Grading was obtained from Kaggle [@shashwat2021], licensed under CC BY 4.0. The dataset comprises 9,786 plain anteroposterior knee radiograph images labelled with KL grades 0–4, sourced from the Osteoarthritis Initiative (OAI), a longitudinal cohort study of adults aged 45–79 conducted across four US clinical sites. Images were provided in a pre-defined train/validation/test split (train n=5,778; validation n=826; test n=1,656). This split was respected throughout all experiments to prevent data leakage and to ensure consistent comparison across baseline and improved models on an identical held-out test set.
 
-Class distribution was markedly imbalanced across the five grades, with a maximum imbalance ratio of 13.2:1 between the most and least represented grades, reflecting the known epidemiological distribution of KOA severity in population cohorts. The specific distribution of grades within the training set is reported in Table 1. Figure 1 shows one example radiograph per KL grade from the training set, illustrating the progressive radiographic changes across the scale.
-
-```{python}
-#| label: fig-dataset-examples
-#| fig-cap: "Example anteroposterior knee radiograph for each KL grade from the training set"
-
-from PIL import Image
-import matplotlib.pyplot as plt
-
-img = Image.open("../outputs/figures/phase1_example_row.png")
-plt.imshow(img)
-plt.axis("off")
-plt.show()
-```
+Class distribution was markedly imbalanced across the five grades, with a maximum imbalance ratio of 13.2:1 between the most and least represented grades, reflecting the known epidemiological distribution of KOA severity in population cohorts. The specific distribution of grades within the training set is reported in Table 1. One example radiograph per KL grade is shown in Figure 1 \[to be added after data download\].
 
 ## Baseline Image Preprocessing and Augmentation
 
@@ -97,21 +78,19 @@ Class imbalance was addressed through two complementary strategies. A WeightedRa
 
 Both ResNet50 and EfficientNet-B0 were trained under identical conditions to isolate architecture as the sole variable of comparison. The Adam optimiser was used with a learning rate of 0.001, batch size of 32, and a maximum of 50 epochs with early stopping monitoring validation loss. To assess model stability, training was repeated across three random seeds (42, 123, 456) for both architectures; per-grade AUC is reported as mean ± standard deviation across seeds. Training was conducted on the Cambridge Service for Data-Driven Discovery (CSD3) high-performance computing cluster using an NVIDIA A100 GPU. Full configuration is summarised in Table 2.
 
-```{python}
-#| label: tbl-config
-#| tbl-cap: "Training configuration — identical for both architectures in Phase 1"
+| Parameter    | Value                                      |
+|--------------|--------------------------------------------|
+| Architectures| ResNet50, EfficientNet-B0                  |
+| Pretraining  | ImageNet                                   |
+| Epochs       | 50 (early stopping on validation loss)     |
+| Learning rate| 0.001                                      |
+| Batch size   | 32                                         |
+| Image size   | 224×224 px                                 |
+| Optimiser    | Adam                                       |
+| Hardware     | NVIDIA A100, CSD3                          |
+| Seeds        | 42, 123, 456                               |
 
-import pandas as pd
-
-config = {
-    "Parameter": ["Architectures", "Pretraining", "Epochs", "Learning rate",
-                   "Batch size", "Image size", "Optimiser", "Hardware", "Seeds"],
-    "Value": ["ResNet50, EfficientNet-B0", "ImageNet", "50 (early stopping on validation loss)",
-               "0.001", "32", "224×224 px", "Adam", "NVIDIA A100, CSD3", "42, 123, 456"]
-}
-
-pd.DataFrame(config)
-```
+: Training configuration — identical for both architectures in Phase 1
 
 The primary comparison criterion was per-grade AUC on the held-out test set, with particular focus on KL grade 1 AUC as the most clinically sensitive indicator of early-stage classification capability. Macro-averaged AUC served as the secondary comparison metric for overall discriminative performance. The architecture with superior grade 1 AUC in Phase 1 was selected as the base model for all Phase 2 targeted interventions.
 
@@ -155,18 +134,7 @@ The ResNet50 model trained on 5,778 knee radiographs achieved an overall test se
 
 Overall accuracy of 58.64% is lower than figures reported in some published studies; however, this metric is a poor indicator of true model performance in the context of a five-class imbalanced classification task. Macro AUC of 0.865 provides a more meaningful assessment, as it evaluates discriminative performance for each grade independently of class frequency and is directly comparable with published benchmarks. This figure is consistent with the range reported in the systematic review by Zhao et al., who found pooled AUC above 0.80 across KL grades in 19 deep learning studies, and with Olsson et al., whose ResNet model achieved AUC above 0.87 across most grades in a comparable real-world dataset [@zhao2024; @olsson2021].
 
-```{python}
-#| label: fig-training
-#| fig-cap: "Training and validation loss across epochs"
-
-from PIL import Image
-import matplotlib.pyplot as plt
-
-img = Image.open("../outputs/figures/training_history.png")
-plt.imshow(img)
-plt.axis("off")
-plt.show()
-```
+*Figure: Training and validation loss across epochs \[to be added after training\]*
 
 ## Grade-Specific Performance
 
@@ -214,44 +182,11 @@ Performance followed a consistent pattern across the KL scale: the model perform
 
 KL grade 1 precision of 0.27 is particularly notable: of all images the model predicted as grade 1, only 27% were truly grade 1. The model's recall for grade 1 was higher at 0.42, indicating it detected some true grade 1 images but at the cost of substantial false positives from adjacent grades. This asymmetric error profile suggests the model struggles to confidently distinguish doubtful from normal or mild OA — a finding that mirrors the known inter-rater variability among human radiologists at this boundary, where kappa values below 0.70 have been consistently reported [@vaattovaara2025].
 
-```{python}
-#| label: fig-auc-grades
-#| fig-cap: "Per-grade AUC (one-vs-rest) on the held-out test set. Dashed line shows macro-averaged AUC of 0.865."
+*Figure: Per-grade AUC (one-vs-rest) on the held-out test set \[to be added after training\]*
 
-from PIL import Image
-import matplotlib.pyplot as plt
+*Figure: Per-grade precision, recall, and F1-score on the held-out test set \[to be added after training\]*
 
-img = Image.open("../outputs/figures/auc_per_grade.png")
-plt.imshow(img)
-plt.axis("off")
-plt.show()
-```
-
-```{python}
-#| label: fig-grade-metrics
-#| fig-cap: "Per-grade precision, recall, and F1-score on the held-out test set. Dashed line shows overall accuracy of 58.6%."
-
-from PIL import Image
-import matplotlib.pyplot as plt
-
-img = Image.open("../outputs/figures/grade_metrics_bar.png")
-plt.imshow(img)
-plt.axis("off")
-plt.show()
-```
-
-```{python}
-#| label: fig-confusion-matrix
-#| fig-cap: "Confusion matrix for the baseline ResNet50 model on the held-out test set (n=1,656). Rows = true grade, columns = predicted grade."
-
-from PIL import Image
-import matplotlib.pyplot as plt
-
-img = Image.open("../outputs/figures/confusion_matrix.png")
-plt.imshow(img)
-plt.axis("off")
-plt.show()
-```
+*Figure: Confusion matrix for the baseline model on the held-out test set \[to be added after training\]*
 
 ## Grad-CAM Attention Map Audit
 
@@ -263,18 +198,7 @@ However, a distinct pattern emerged in misclassified cases. In \[XX\] of \[XX\] 
 
 These findings indicate that the model's failure at KL grade 1 is not simply a statistical artefact of class imbalance — it reflects genuine difficulty in identifying low-contrast, subtle radiographic features at the early disease boundary, compounded by the absence of clinical contextual information (patient age, BMI, and acquisition positioning) that would inform a human radiographer's interpretation.
 
-```{python}
-#| label: fig-gradcam
-#| fig-cap: "Grad-CAM attention maps for representative cases per KL grade"
-
-from PIL import Image
-import matplotlib.pyplot as plt
-
-img = Image.open("../outputs/figures/gradcam_grid.png")
-plt.imshow(img)
-plt.axis("off")
-plt.show()
-```
+*Figure: Grad-CAM attention maps for representative cases per KL grade \[to be added after training\]*
 
 ## Iterative Model Improvement
 
