@@ -1,9 +1,6 @@
 # Python virtual environment (root level)
 env/
 
-# R project user settings
-.Rproj.user/
-
 # Quarto cache
 .quarto/
 *.quarto_ipynb
