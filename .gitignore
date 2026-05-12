@@ -1,23 +1,12 @@
-# Python
+# Python virtual environment (root level)
 env/
-__pycache__/
-*.pyc
-*.pyo
 
-# Quarto
-/.quarto/
-**/*.quarto_ipynb
-*.html
-HCDS_Mod05_files/
-
-# Data — too large for GitHub
-data/
-
-# R
+# R project user settings
 .Rproj.user/
+
+# Quarto cache
+.quarto/
+*.quarto_ipynb
 
 # macOS
 .DS_Store
-
-/env/
-.positai
