@@ -69,6 +69,8 @@ knee_oa_kl_grading/
 The Kaggle Knee Osteoarthritis Dataset with Severity Grading (CC BY 4.0) is available at:  
 <https://www.kaggle.com/datasets/shashwatwork/knee-osteoarthritis-dataset-with-severity>
 
+**Ethics:** This study uses a publicly available, fully anonymised radiographic dataset released under a Creative Commons CC BY 4.0 licence. No identifiable patient data are included and no additional ethical approval was required.
+
 Download and place in `data/raw/` maintaining the `train/val/test` folder structure:
 
 ```
