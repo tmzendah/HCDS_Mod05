@@ -9,7 +9,7 @@ author:
 abstract: |
   **Background:** Automated Kellgren-Lawrence (KL) grading of knee osteoarthritis using deep learning has achieved high overall accuracy in published studies. However, grade-specific performance variation and the clinical validity of model attention patterns remain underexplored.
   
-  **Methods:** A ResNet50 convolutional neural network was trained on 5,778 knee radiographs from the public Knee Osteoarthritis Dataset with Severity Grading using transfer learning and weighted loss functions to address class imbalance. Per-grade performance metrics were calculated for all five KL grades. Grad-CAM attention maps were generated for a stratified random sample of 100 images and assessed against a pre-defined anatomical plausibility checklist by a qualified research radiographer.
+  **Methods:** Two CNN architectures (ResNet50 and EfficientNet-B0) were compared on 5,778 knee radiographs from the public Knee Osteoarthritis Dataset with Severity Grading using transfer learning and weighted loss functions to address class imbalance. The better-performing architecture was selected for a structured programme of targeted improvement experiments. Per-grade performance metrics were calculated for all five KL grades. Grad-CAM attention maps were generated for a stratified random sample of 100 images and assessed against a pre-defined anatomical plausibility checklist by a qualified research radiographer.
   
   **Results:** To be completed after full training.
   
@@ -53,7 +53,7 @@ Knee osteoarthritis (KOA) affects approximately 250 million people globally [@wh
 
 This study was designed as a retrospective diagnostic performance evaluation of a convolutional neural network for automated Kellgren-Lawrence grading of knee osteoarthritis from plain radiographs, with an integrated radiographer-led explainability audit and iterative model improvement. Reporting was informed by the TRIPOD+AI framework for transparent reporting of machine learning prediction models. No patient data were collected; all images were sourced from publicly available, anonymised datasets under open licences. No ethics approval was required.
 
-The study addressed four pre-specified objectives: (1) training and evaluating a baseline ResNet50 classifier for five-class KL grading; (2) characterising grade-specific performance failure with particular attention to KL grade 1; (3) conducting a structured radiographer-led audit of Grad-CAM attention maps against an anatomical plausibility checklist; and (4) implementing and evaluating targeted model improvements motivated by the observed failure patterns.
+The study addressed four pre-specified objectives: (1) comparing ResNet50 and EfficientNet-B0 architectures under identical training conditions for five-class KL grading, and selecting the superior architecture for further experimentation; (2) characterising grade-specific performance failure with particular attention to KL grade 1; (3) conducting a structured radiographer-led audit of Grad-CAM attention maps against an anatomical plausibility checklist; and (4) implementing and evaluating targeted model improvements motivated by the observed failure patterns.
 
 ## Dataset
 
@@ -80,37 +80,45 @@ All images were resized to 224×224 pixels to match the input dimensions require
 
 Data augmentation was applied exclusively to training images. Augmentations were selected on the basis of clinical plausibility for knee radiography: random rotation within ±10° was applied to simulate physiological variation in patient positioning and image acquisition angle. Augmentations that would introduce clinically implausible appearances — specifically horizontal flipping, which would reverse medial and lateral joint compartments — were deliberately excluded. No augmentation was applied to validation or test images in any experiment.
 
-## Model Architecture and Transfer Learning
+## Candidate Architectures
 
-A ResNet50 convolutional neural network pretrained on ImageNet was selected as the model architecture, based on its established performance in musculoskeletal radiograph classification and KL grading tasks specifically [@sharma2025; @olsson2021]. Transfer learning from ImageNet provides a hierarchical feature extractor that generalises effectively to radiographic images, addressing the data scarcity constraints typical in medical imaging. The final fully connected layer was replaced with a linear layer mapping to five output classes corresponding to KL grades 0–4. All layers were fine-tuned during training to allow adaptation of low-level features to the radiographic domain.
+Two CNN architectures were selected as candidates for comparative evaluation: ResNet50 and EfficientNet-B0, both pretrained on ImageNet.
+
+**ResNet50** is a 50-layer residual network whose skip connections mitigate the vanishing gradient problem and enable effective feature transfer to medical imaging tasks [@sharma2025; @olsson2021]. It has been widely validated for musculoskeletal radiograph classification and KL grading specifically, providing a robust and well-understood baseline. The final fully connected layer was replaced with a linear layer mapping to five output classes corresponding to KL grades 0–4.
+
+**EfficientNet-B0** is a compound-scaled architecture that simultaneously optimises network depth, width, and input resolution using a principled scaling coefficient, achieving strong discriminative performance at substantially lower computational cost than comparably accurate ResNet variants [@tan2019efficientnet]. Critically, Momenpour et al. applied EfficientNet to the identical Kaggle Knee Osteoarthritis dataset used in this study and reported a classification accuracy of 82.07%, substantially outperforming ResNet-101 which achieved 69% on the same task [@momenpour2025]. This direct evidence on the same data and task motivated the inclusion of EfficientNet-B0 as the primary comparator. As with ResNet50, the classification head was replaced with a linear layer mapping to five KL grade classes.
+
+In both architectures, all layers were fine-tuned end-to-end during training to allow adaptation of low-level convolutional features to the radiographic domain. Transfer learning from ImageNet addresses the data scarcity constraints typical in medical imaging and provides a strong initialisation for hierarchical feature extraction.
 
 ## Class Imbalance Mitigation
 
 Class imbalance was addressed through two complementary strategies. A WeightedRandomSampler was applied during data loading to oversample minority grade images within each training batch proportionally to inverse class frequency. A weighted CrossEntropyLoss function was simultaneously applied during optimisation, assigning higher loss penalties to misclassifications of under-represented grades. This dual strategy — operating at both the sampling and loss levels — has been shown to improve minority class sensitivity in imbalanced medical image classification tasks [@chamseddine2022].
 
-## Baseline Model Training
+## Phase 1: Architectural Comparison
 
-Training was conducted on the Cambridge Service for Data-Driven Discovery (CSD3) high-performance computing cluster using an NVIDIA A100 GPU. The Adam optimiser was used with a learning rate of 0.001 and batch size of 32. Training ran for a maximum of 50 epochs with early stopping monitoring validation loss; training stopped at epoch 44, with the best model checkpoint saved at epoch 34 based on minimum validation loss. A random seed of 42 was fixed throughout for reproducibility. Full training configuration is summarised in Table 2.
+Both ResNet50 and EfficientNet-B0 were trained under identical conditions to isolate architecture as the sole variable of comparison. The Adam optimiser was used with a learning rate of 0.001, batch size of 32, and a maximum of 50 epochs with early stopping monitoring validation loss. A random seed of 42 was fixed throughout for reproducibility. Training was conducted on the Cambridge Service for Data-Driven Discovery (CSD3) high-performance computing cluster using an NVIDIA A100 GPU. Full configuration is summarised in Table 2.
 
 ```{python}
 #| label: tbl-config
-#| tbl-cap: "Model training configuration"
+#| tbl-cap: "Training configuration — identical for both architectures in Phase 1"
 
 import pandas as pd
 
 config = {
-    "Parameter": ["Architecture", "Pretraining", "Epochs", "Learning rate",
+    "Parameter": ["Architectures", "Pretraining", "Epochs", "Learning rate",
                    "Batch size", "Image size", "Optimiser", "Hardware", "Seed"],
-    "Value": ["ResNet50", "ImageNet", "50 (early stop epoch 44, best epoch 34)",
+    "Value": ["ResNet50, EfficientNet-B0", "ImageNet", "50 (early stopping on validation loss)",
                "0.001", "32", "224×224 px", "Adam", "NVIDIA A100, CSD3", "42"]
 }
 
 pd.DataFrame(config)
 ```
 
-## Iterative Model Improvement
+The primary comparison criterion was per-grade AUC on the held-out test set, with particular focus on KL grade 1 AUC as the most clinically sensitive indicator of early-stage classification capability. Macro-averaged AUC served as the secondary comparison metric for overall discriminative performance. The architecture with superior grade 1 AUC in Phase 1 was selected as the base model for all Phase 2 targeted interventions.
 
-Following baseline training and evaluation, a structured programme of targeted improvements was implemented. Each intervention was motivated by a specific finding from the baseline results or the Grad-CAM audit, and each was evaluated by retraining from scratch on the same dataset split and comparing per-grade AUC against the baseline on the identical held-out test set. All other hyperparameters were held constant across experiments to isolate the effect of each intervention.
+## Phase 2: Targeted Interventions
+
+Following Phase 1 architectural comparison, a structured programme of targeted improvements was applied to the better-performing architecture. Each intervention was motivated by a specific finding from the Phase 1 results or the Grad-CAM audit, and each was evaluated by retraining from scratch on the same dataset split and comparing per-grade AUC against the Phase 1 baseline on the identical held-out test set. All other hyperparameters were held constant across experiments to isolate the effect of each intervention.
 
 **Experiment 1 — CLAHE Preprocessing**
 
