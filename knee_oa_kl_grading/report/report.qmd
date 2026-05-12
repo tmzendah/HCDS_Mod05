@@ -9,7 +9,7 @@ author:
 abstract: |
   **Background:** Automated Kellgren-Lawrence (KL) grading of knee osteoarthritis using deep learning has achieved high overall accuracy in published studies. However, grade-specific performance variation and the clinical validity of model attention patterns remain underexplored.
   
-  **Methods:** Two CNN architectures (ResNet50 and EfficientNet-B0) were compared on 5,778 knee radiographs from the public Knee Osteoarthritis Dataset with Severity Grading using transfer learning and weighted loss functions to address class imbalance. The better-performing architecture was selected for a structured programme of targeted improvement experiments. Per-grade performance metrics were calculated for all five KL grades. Grad-CAM attention maps were generated for a stratified random sample of 100 images and assessed against a pre-defined anatomical plausibility checklist by a qualified research radiographer.
+  **Methods:** Two convolutional neural network architectures — ResNet50 and EfficientNet-B0 — were trained and compared on 5,778 knee radiographs using identical preprocessing and evaluation pipelines. Per-grade performance metrics were calculated for all five KL grades across three random seeds. Grad-CAM attention maps were generated for a stratified random sample of 100 images and assessed against a pre-defined anatomical plausibility checklist by a qualified research radiographer.
   
   **Results:** To be completed after full training.
   
