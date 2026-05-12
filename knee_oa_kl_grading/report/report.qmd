@@ -26,12 +26,11 @@ keywords:
   - radiographer
 
 format:
-  html:
-    theme: cosmo
+  docx:
     toc: true
     toc-depth: 3
     number-sections: true
-    self-contained: true
+    highlight-style: github
 
 bibliography: references.bib
 

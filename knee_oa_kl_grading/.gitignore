@@ -18,3 +18,7 @@ __pycache__/
 
 # Rendered report (generated, not source)
 report/report.html
+report/report.docx
+
+/.quarto/
+**/*.quarto_ipynb
