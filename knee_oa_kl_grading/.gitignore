@@ -1,27 +1,20 @@
-# Data — never commit raw or processed images
-data/
+# Data — link to Kaggle instead
+data/raw/
+data/processed/
 
-# Model outputs — .pth files are too large for GitHub
+# Model checkpoints — too large for GitHub
 outputs/checkpoints/
 
-# Rendered/generated report artefacts
-report/report.html
-report/report.tex
-report/report.log
-report/report_files/
-
-# Python
+# Python cache
 __pycache__/
-*.py[cod]
-*.egg-info/
-.venv/
-.env
+*.pyc
+*.pth
 
-# Jupyter
+# Jupyter checkpoints
 .ipynb_checkpoints/
 
-# macOS
+# System files
 .DS_Store
 
-# Conda / pip
-*.egg
+# Rendered report (generated, not source)
+report/report.html
