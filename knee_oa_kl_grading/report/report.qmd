@@ -171,7 +171,7 @@ plt.show()
 
 ## Grade-Specific Performance
 
-Grade-specific performance varied substantially across the KL scale, revealing a clinically meaningful pattern of failure that overall metrics obscure. Full per-grade metrics are presented in Table 3.
+Grade-specific performance varied substantially across the KL scale, revealing a clinically meaningful pattern of failure that overall metrics obscure. Per-grade metrics for both architectures are presented in Tables 3a and 3b; Table 4 reports AUC stability across all three seeds.
 
 | KL Grade  | Description | Precision | Recall | F1   | AUC   | Support |
 |-----------|-------------|-----------|--------|------|-------|---------|
@@ -182,7 +182,20 @@ Grade-specific performance varied substantially across the KL scale, revealing a
 | Grade 4   | Severe      | 0.86      | 0.86   | 0.86 | 0.991 | 51      |
 | Macro avg | —           | 0.65      | 0.65   | 0.64 | 0.865 | 1,656   |
 
-: Per-grade classification metrics on the held-out test set — seed 42 (single-run reference)
+: **Table 3a** — ResNet50 per-grade metrics, held-out test set, seed 42
+
+| KL Grade  | Description | Precision | Recall | F1   | AUC   | Support |
+|-----------|-------------|-----------|--------|------|-------|---------|
+| Grade 0   | Normal      | [XX]      | [XX]   | [XX] | [XX]  | 639     |
+| Grade 1   | Doubtful    | [XX]      | [XX]   | [XX] | [XX]  | 296     |
+| Grade 2   | Mild        | [XX]      | [XX]   | [XX] | [XX]  | 447     |
+| Grade 3   | Moderate    | [XX]      | [XX]   | [XX] | [XX]  | 223     |
+| Grade 4   | Severe      | [XX]      | [XX]   | [XX] | [XX]  | 51      |
+| Macro avg | —           | [XX]      | [XX]   | [XX] | [XX]  | 1,656   |
+
+: **Table 3b** — EfficientNet-B0 per-grade metrics, held-out test set, seed 42
+
+The key comparison between the two architectures is KL grade 1 AUC, which directly addresses the research question. ResNet50 achieved grade 1 AUC of 0.662 — the lowest of all grades and the dominant failure mode of the baseline model. \[Once EfficientNet-B0 training is complete, insert one of the following: (a) "EfficientNet-B0 achieved grade 1 AUC of [XX], representing a \[improvement/deterioration\] of \[XX\] points, suggesting that the grade 1 failure is \[architecture-specific / persistent across architectures\]." (b) If EfficientNet improves grade 1: "The improvement suggests that EfficientNet-B0's compound scaling, which optimises resolution alongside depth, enables detection of the low-contrast osteophyte features that define early OA more effectively than ResNet50's residual connections alone." (c) If the failure persists: "The persistence of grade 1 failure regardless of architecture strengthens the argument that the constraint is label noise and feature ambiguity at the early OA boundary, rather than a correctable architectural limitation."\]
 
 Table 4 reports AUC stability across all three seeds for both architectures.
 
