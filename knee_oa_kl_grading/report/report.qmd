@@ -1,5 +1,5 @@
 ---
-title: "Automated Kellgren-Lawrence Grading of Knee Osteoarthritis Using Real-World Clinical Data: A Cross-Dataset Evaluation of Deep Learning Models Trained on Inferred Labels"
+title: "Can CNNs Trained on DL-Inferred KL Pseudo-Labels from MRKR Classify Knee OA Severity and Generalise to Radiologist-Labelled OAI/Kaggle Radiographs, Particularly for Early OA Grades?"
 
 author:
   - name: "Talita Mzendah"
