@@ -3,155 +3,134 @@ Can CNNs Trained on DL-Inferred KL Pseudo-Labels from MRKR Classify Knee OA Seve
 
 ---
 
-**Abstract** (~300 words)
-- Background
-- Methods
-- Results (placeholder)
-- Conclusions (placeholder)
+## Abstract
+
+[Paste your final abstract here once complete]
 
 ---
 
-**1. Introduction** (~400 words)
-- 1.1 Clinical burden of knee osteoarthritis
-- 1.2 Kellgren-Lawrence grading system and its limitations
-- 1.3 Deep learning for automated KL grading — state of the art
-- 1.4 Gap in literature — DL-inferred labels, fairness analysis
-- 1.5 Research objectives and study overview
+## 1. Introduction
+
+[Introduction to be written — approximately 400 words covering: clinical burden of knee OA; Kellgren-Lawrence grading and its limitations; deep learning for automated KL grading; gap in the literature on DL-inferred labels and fairness analysis; research objectives.]
 
 ---
 
-**2. Methods** (~700 words)
+## 2. Methods
 
-- 2.1 Study design and reporting framework
-    - Retrospective diagnostic performance evaluation
-    - TRIPOD+AI reporting
-    - No ethics approval required — anonymised public data
+### 2.1 Study Design and Reporting Framework
 
-- 2.2 Datasets
-    - 2.2.1 Primary training dataset — MRKR
-        - Dataset description and access
-        - Label source — DL-inferred KL grades
-        - Demographics — sex, race, ethnicity
-    - 2.2.2 External validation dataset — OAI/Kaggle
-        - Dataset description
-        - Label source — radiologist graded
-        - Rationale for cross-dataset validation
+This retrospective diagnostic performance evaluation compared three CNN architectures for automated Kellgren-Lawrence (KL) grading of knee osteoarthritis from anteroposterior (AP) radiographs. Two objectives were addressed: first, to compare classification performance of CNNs trained on deep learning-inferred KL pseudo-labels from a large clinical dataset (MRKR); second, to test whether pseudo-label-trained models generalise to radiologist-graded ground truth via external validation (OAI/Kaggle). Reporting followed the TRIPOD+AI framework. All images came from two publicly anonymised datasets; no ethics approval was required.
 
-- 2.3 Data preparation
-    - 2.3.1 Inclusion criteria and filter cascade
-        - Frontal views, no arthroplasty, valid KL grades
-        - Bilateral expansion — one row per knee
-        - Stratified random sample — 2,000 per grade
-    - 2.3.2 Preprocessing pipeline
-        - Bilateral knee separation — rule-based crop with horizontal_flip correction
-        - CLAHE contrast enhancement — clip_limit=2.0, tile_grid=8×8
-    - 2.3.3 Train/validation/test split
-        - Patient-level stratified 70/15/15
-        - Data leakage prevention
+### 2.2 Datasets
 
-- 2.4 Model architectures
-    - 2.4.1 ResNet50
-    - 2.4.2 DenseNet121
-    - 2.4.3 EfficientNet-B0
-    - Transfer learning and fine-tuning rationale
+**Primary training (MRKR).** The MRKR dataset [@price2024emorykneeradiographmrkr] contains 503,261 knee radiographs from Emory University Health System. KL pseudo-labels were derived from a validated deep learning inference pipeline. After filtering for frontal view, known laterality, no arthroplasty, and valid KL grades (0–4), we selected a balanced subset of 2,000 images per grade (total 10,000) — all bilateral AP radiographs. Demographic metadata (sex, race, age, weightbearing status) enabled fairness analysis.
 
-- 2.5 Training configuration
-    - 2.5.1 Ordinal loss function
-        - Formula and justification
-        - Comparison to standard cross-entropy
-    - 2.5.2 Optimisation
-        - Adam optimiser, lr=1e-4
-        - ReduceLROnPlateau scheduler
-        - Early stopping
-    - 2.5.3 Augmentation
-        - RandomHorizontalFlip, RandomRotation, ColorJitter
-        - RandomResizedCrop exclusion — clinical justification
-    - 2.5.4 Architecture-specific image sizes
-    - 2.5.5 Reproducibility — three seeds (42, 123, 456)
+**External validation (OAI/Kaggle).** The Knee Osteoarthritis Severity Grading Dataset [@chen2018knee] — a curated OAI subset — contains 9,786 AP knee radiographs with radiologist-assigned KL grades (0–4). Accessed via Kaggle (CC BY 4.0), its pre-defined test split (n=1,656) was used without modification.
 
-- 2.6 Evaluation strategy
-    - 2.6.1 Primary metrics
-        - Balanced accuracy, Macro F1, MAE, Grade-1 recall
-    - 2.6.2 Stability analysis across seeds
-    - 2.6.3 External validation — OAI/Kaggle
-    - 2.6.4 Subgroup fairness analysis
-        - Sex, race, ethnicity, weightbearing, age group, laterality
+### 2.3 Data Preparation
 
----
+**Bilateral separation.** Each MRKR image contains both knees. Using metadata fields `knee_side` (L/R) and `horizontal_flip` (0/1), we cropped the relevant half per a rule-based algorithm. Visual audit estimated fewer than 5% of images had incorrect flip flags — acknowledged as a limitation.
 
-**3. Results** (~600 words + tables/figures)
+**Preprocessing.** Contrast Limited Adaptive Histogram Equalisation (CLAHE) was applied to each cropped image (clip_limit=2.0, tile_grid_size=8×8) to enhance local contrast at joint margins and osteophytes [@gour2023]. Images were then resized to architecture-specific input sizes (ResNet50: 448×448; DenseNet121: 384×384; EfficientNet-B0: 456×456).
 
-- 3.1 Dataset characteristics
-    - Filter cascade summary table
-    - Demographics breakdown table
-    - Weightbearing and acquisition type distribution
+**Train/validation/test split.** Patient-level splitting (using `empi_anon`) prevented data leakage from bilateral expansion. A stratified 70/15/15 split by majority KL grade per patient gave approximately 7,000 training, 1,500 validation, and 1,500 test images. A fixed random seed (42) ensured reproducibility across runs.
 
-- 3.2 Model comparison — MRKR test set
-    - Table: Balanced accuracy / Macro F1 / MAE / Grade-1 recall
-      (mean ± SD across three seeds, all three models)
-    - Training curves figure
+### 2.4 Model Architectures
 
-- 3.3 Per-grade performance
-    - Table: Precision / Recall / F1 per grade per model
-    - Confusion matrix figure (best model)
-    - Per-grade F1 bar chart figure
+Three ImageNet-pretrained CNNs were fine-tuned end-to-end:
 
-- 3.4 Model stability across seeds
-    - Mean ± SD table
-    - Best model selection justification
+- **ResNet50** [@tiulpin2019] — residual connections for stable gradient flow.
+- **DenseNet121** [@huang2017densenet] — dense connectivity for subtle feature reuse.
+- **EfficientNet-B0** [@tan2019efficientnet] — compound scaling for parameter efficiency.
 
-- 3.5 External validation — OAI/Kaggle
-    - Table: MRKR test vs OAI/Kaggle performance
-    - Performance gap analysis
+**Traditional baseline.** A Random Forest classifier was trained on handcrafted features (mean intensity, standard deviation, entropy, Sobel edge density, and percentile range) extracted from the same CLAHE-preprocessed images, providing a non-deep learning comparison.
 
-- 3.6 Subgroup fairness analysis
-    - Table: Balanced accuracy by subgroup (best model)
-    - Grade-1 recall by subgroup
+### 2.5 Training Configuration
+
+**Loss function.** An ordinal variant of cross-entropy was used, where the penalty for misclassification is proportional to the absolute grade distance:
+
+$$\mathcal{L} = \frac{1}{N}\sum_{n}\frac{\sum_{i}|i - y_n|\log(p_i)}{\sum_{i}|i - y_n|}$$
+
+This assigns zero penalty for correct predictions and linearly increasing penalties for more distant errors.
+
+**Optimisation.** Adam optimiser (lr=1e-4, weight decay=1e-4). ReduceLROnPlateau scheduler (factor 0.5, patience 3 epochs). Maximum 30 epochs with early stopping (patience 7). Batch size = 64.
+
+**Data augmentation (training only).** RandomHorizontalFlip (p=0.5), RandomRotation (±10°), ColorJitter (brightness=0.2, contrast=0.2). RandomResizedCrop was excluded to avoid removing the joint space.
+
+**Reproducibility.** All experiments were run with three random seeds (42, 123, 456) — nine training jobs in total. Each ran on an NVIDIA A100-SXM4-80GB GPU (Cambridge CSD3 HPC).
+
+### 2.6 Evaluation
+
+**Primary metrics.** Balanced accuracy, macro F1, mean absolute error (MAE), confusion matrices, and grade-1 precision/recall/F1 were computed on the internal test set.
+
+**Stability and statistical testing.** Mean and standard deviation across three seeds were reported for all metrics. Pairwise model comparisons used McNemar's test on test set predictions (significance threshold p\<0.05 after Bonferroni correction).
+
+**External validation.** The best-performing architecture (by mean balanced accuracy) was evaluated on the OAI/Kaggle test set (n=1,656) without retraining. The performance gap quantifies pseudo-label noise and domain shift.
+
+**Explainability (Grad-CAM).** Gradient-weighted Class Activation Mapping [@selvaraju2017] was applied to the final convolutional layer of each CNN. Heatmaps were generated for correctly and incorrectly classified test images to visualise anatomical regions driving predictions, supporting transparency and clinical trust.
+
+**Subgroup fairness analysis.** Using MRKR test set metadata, balanced accuracy and grade-1 recall were reported by sex, race, ethnicity, weightbearing status, age group (\<40, 40–49, 50–59, 60–69, ≥70), and laterality.
+
+### 2.7 Ethical Considerations
+
+All datasets are de-identified and publicly available; no new patient consent was required. However, the use of pseudo-labels (MRKR) introduces possible systematic bias if the inference pipeline underperformed on certain subgroups, assessed here via fairness analysis. Deep learning models are inherently opaque; Grad-CAM mitigates this partially but does not guarantee clinical interpretability. The model is intended as a decision support tool only — never for autonomous diagnosis. Future deployment would require regulatory approval (e.g., MHRA) and prospective validation.
 
 ---
 
-**4. Discussion** (~800 words)
+## 3. Results
 
-- 4.1 Principal findings summary
-- 4.2 Model comparison — which architecture and why
-- 4.3 Grade-1 failure — label noise vs architectural limitation
-    - Comparison to Zhao et al. 2024 meta-analysis benchmark
-- 4.4 Ordinal loss — did it help?
-    - Compare to v1 results (standard cross-entropy)
-- 4.5 Generalisation — MRKR to OAI/Kaggle
-    - DL-inferred vs radiologist labels
-    - Domain shift interpretation
-- 4.6 Fairness across subgroups
-    - Sex, race, weightbearing findings
-    - Clinical implications
-- 4.7 Limitations
-    - DL-inferred labels
-    - No knee joint detection
-    - ~3-5% flip flag errors
-    - 10,000 image subset
-    - Single external validation dataset
-- 4.8 Future directions
-    - Knee joint detection with YOLO
-    - 20K dataset expansion
-    - Uncertainty quantification
-    - Multimodal architecture with clinical metadata
+### 3.1 Dataset Characteristics
 
----
+[Filter cascade summary table, demographics breakdown, weightbearing and acquisition type distribution — to be completed after training.]
 
-**5. Conclusions** (~200 words)
-- Key findings
-- Clinical implications
-- Recommendations for deployment
+### 3.2 Model Comparison — MRKR Test Set
+
+[Table: Balanced accuracy / Macro F1 / MAE / Grade-1 recall (mean ± SD across three seeds, all three models). Training curves figure.]
+
+### 3.3 Per-Grade Performance
+
+[Table: Precision / Recall / F1 per grade per model. Confusion matrix figure (best model). Per-grade F1 bar chart.]
+
+### 3.4 Model Stability Across Seeds
+
+[Mean ± SD table. Best model selection justification. McNemar's test results.]
+
+### 3.5 External Validation — OAI/Kaggle
+
+[Table: MRKR test vs OAI/Kaggle performance. Performance gap analysis.]
+
+### 3.6 Subgroup Fairness Analysis
+
+[Table: Balanced accuracy by subgroup (best model). Grade-1 recall by subgroup.]
 
 ---
 
-**References**
+## 4. Discussion
 
+[Discussion to be written — approximately 800 words covering: principal findings; model comparison; grade-1 failure (label noise vs architectural limitation); ordinal loss contribution; generalisation from MRKR to OAI/Kaggle; fairness across subgroups; limitations; future directions.]
 
-**Appendices** (do not count toward word limit)
-- Appendix A: Filter cascade detailed numbers
-- Appendix B: Full per-grade metrics all seeds
-- Appendix C: GitHub repository link and README
+---
+
+## 5. Conclusions
+
+[Conclusions to be written — approximately 200 words covering: key findings, clinical implications, and recommendations for deployment.]
+
+---
+
+## References
+
+::: {#refs}
+:::
+
+---
+
+## Appendices
+
+**Appendix A.** Filter cascade detailed numbers.
+
+**Appendix B.** Full per-grade metrics across all seeds.
+
+**Appendix C.** GitHub repository: <https://github.com/tmzendah/HCDS_Mod05>
 
 
 
