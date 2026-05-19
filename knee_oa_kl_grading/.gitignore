@@ -1,14 +1,15 @@
-# Data — link to Kaggle instead
+# Data — too large for GitHub (download from MRKR / Kaggle)
 data/raw/
 data/processed/
 
 # Model checkpoints — too large for GitHub
-outputs/checkpoints/
+checkpoints/*
+!checkpoints/.gitkeep
+*.pth
 
 # Python cache
 __pycache__/
 *.pyc
-*.pth
 
 # Jupyter checkpoints
 .ipynb_checkpoints/

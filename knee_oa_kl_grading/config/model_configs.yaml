@@ -1,0 +1,19 @@
+# Model-specific configuration — Knee OA KL Grading
+
+resnet50:
+  pretrained: true
+  num_classes: 5
+  image_size: 224
+  freeze_backbone_epochs: 5
+
+densenet121:
+  pretrained: true
+  num_classes: 5
+  image_size: 224
+  freeze_backbone_epochs: 5
+
+efficientnet_b0:
+  pretrained: true
+  num_classes: 5
+  image_size: 224
+  freeze_backbone_epochs: 5
