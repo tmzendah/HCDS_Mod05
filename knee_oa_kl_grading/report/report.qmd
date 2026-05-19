@@ -1,306 +1,157 @@
 ---
-title: "Can CNNs Trained on DL-Inferred KL Pseudo-Labels from MRKR Classify Knee OA Severity and Generalise to Radiologist-Labelled OAI/Kaggle Radiographs, Particularly for Early OA Grades?"
+Can CNNs Trained on DL-Inferred KL Pseudo-Labels from MRKR Classify Knee OA Severity and Generalise to Radiologist-Labelled OAI/Kaggle Radiographs, Particularly for Early OA Grades?
 
-author:
-  - name: "Talita Mzendah"
-    affiliation: "Department of Continuing Education, University of Cambridge"
-    email: "tm922@cam.ac.uk"
-
-abstract: |
-  **Background:** [Author to write: KOA global burden and disability impact; the Kellgren-Lawrence grading scale and its clinical role; the gap in the literature between studies using radiologist-assigned ground truth labels and large-scale real-world datasets where labels are DL-inferred; why this gap matters for clinical translation.]
-
-  **Methods:** [Author to write: MRKR dataset (n=10,000 working subset, 2,000 images per KL grade 0–4), sourced from Emory University Health System multi-site clinical archive; three CNN architectures (ResNet50, DenseNet121, EfficientNet-B0) trained under identical conditions at 512×512 px; patient-level stratified 70/15/15 split; external validation on the OAI/Kaggle dataset (n≈9,786, radiologist-graded ground truth) without retraining; subgroup analysis by sex, race, ethnicity, weightbearing status, age group, and laterality.]
-
-  **Results:** To be completed after training.
-
-  **Conclusions:** To be completed after training.
-
-keywords:
-  - knee osteoarthritis
-  - Kellgren-Lawrence grading
-  - deep learning
-  - convolutional neural network
-  - DL-inferred labels
-  - cross-dataset evaluation
-  - algorithmic fairness
-  - Grad-CAM
-  - MRKR
-
-format:
-  docx:
-    toc: true
-    toc-depth: 3
-    number-sections: true
-    highlight-style: github
-
-bibliography: references.bib
 ---
 
-# Background
+**Abstract** (~300 words)
+- Background
+- Methods
+- Results (placeholder)
+- Conclusions (placeholder)
+
+---
+
+**1. Introduction** (~400 words)
+- 1.1 Clinical burden of knee osteoarthritis
+- 1.2 Kellgren-Lawrence grading system and its limitations
+- 1.3 Deep learning for automated KL grading — state of the art
+- 1.4 Gap in literature — DL-inferred labels, fairness analysis
+- 1.5 Research objectives and study overview
+
+---
+
+**2. Methods** (~700 words)
+
+- 2.1 Study design and reporting framework
+    - Retrospective diagnostic performance evaluation
+    - TRIPOD+AI reporting
+    - No ethics approval required — anonymised public data
+
+- 2.2 Datasets
+    - 2.2.1 Primary training dataset — MRKR
+        - Dataset description and access
+        - Label source — DL-inferred KL grades
+        - Demographics — sex, race, ethnicity
+    - 2.2.2 External validation dataset — OAI/Kaggle
+        - Dataset description
+        - Label source — radiologist graded
+        - Rationale for cross-dataset validation
+
+- 2.3 Data preparation
+    - 2.3.1 Inclusion criteria and filter cascade
+        - Frontal views, no arthroplasty, valid KL grades
+        - Bilateral expansion — one row per knee
+        - Stratified random sample — 2,000 per grade
+    - 2.3.2 Preprocessing pipeline
+        - Bilateral knee separation — rule-based crop with horizontal_flip correction
+        - CLAHE contrast enhancement — clip_limit=2.0, tile_grid=8×8
+    - 2.3.3 Train/validation/test split
+        - Patient-level stratified 70/15/15
+        - Data leakage prevention
+
+- 2.4 Model architectures
+    - 2.4.1 ResNet50
+    - 2.4.2 DenseNet121
+    - 2.4.3 EfficientNet-B0
+    - Transfer learning and fine-tuning rationale
+
+- 2.5 Training configuration
+    - 2.5.1 Ordinal loss function
+        - Formula and justification
+        - Comparison to standard cross-entropy
+    - 2.5.2 Optimisation
+        - Adam optimiser, lr=1e-4
+        - ReduceLROnPlateau scheduler
+        - Early stopping
+    - 2.5.3 Augmentation
+        - RandomHorizontalFlip, RandomRotation, ColorJitter
+        - RandomResizedCrop exclusion — clinical justification
+    - 2.5.4 Architecture-specific image sizes
+    - 2.5.5 Reproducibility — three seeds (42, 123, 456)
+
+- 2.6 Evaluation strategy
+    - 2.6.1 Primary metrics
+        - Balanced accuracy, Macro F1, MAE, Grade-1 recall
+    - 2.6.2 Stability analysis across seeds
+    - 2.6.3 External validation — OAI/Kaggle
+    - 2.6.4 Subgroup fairness analysis
+        - Sex, race, ethnicity, weightbearing, age group, laterality
+
+---
+
+**3. Results** (~600 words + tables/figures)
+
+- 3.1 Dataset characteristics
+    - Filter cascade summary table
+    - Demographics breakdown table
+    - Weightbearing and acquisition type distribution
+
+- 3.2 Model comparison — MRKR test set
+    - Table: Balanced accuracy / Macro F1 / MAE / Grade-1 recall
+      (mean ± SD across three seeds, all three models)
+    - Training curves figure
+
+- 3.3 Per-grade performance
+    - Table: Precision / Recall / F1 per grade per model
+    - Confusion matrix figure (best model)
+    - Per-grade F1 bar chart figure
+
+- 3.4 Model stability across seeds
+    - Mean ± SD table
+    - Best model selection justification
+
+- 3.5 External validation — OAI/Kaggle
+    - Table: MRKR test vs OAI/Kaggle performance
+    - Performance gap analysis
+
+- 3.6 Subgroup fairness analysis
+    - Table: Balanced accuracy by subgroup (best model)
+    - Grade-1 recall by subgroup
 
-Knee osteoarthritis (KOA) affects approximately 250 million people globally [@who2023] and is a leading cause of pain and functional disability in adults over 45. Radiographic severity is standardly quantified using the Kellgren-Lawrence (KL) grading scale, a five-point ordinal scale (0 = normal, 4 = severe) based on features including joint space narrowing, osteophyte formation, subchondral sclerosis, and bony deformity [@kellgren1957]. Accurate and reproducible KL grading is central to clinical decision-making, eligibility assessment for clinical trials, and monitoring of disease progression.
+---
 
-Manual KL grading is time-consuming, subject to inter-reader variability — with reported kappa values below 0.70 at the early-grade boundary — and requires specialist musculoskeletal radiography expertise that is not uniformly available [@vaattovaara2025]. Deep learning approaches to automated KL grading have therefore attracted substantial research attention over the past decade, with published models achieving macro-averaged AUC above 0.80 across most grades in standardised research datasets [@zhao2024; @litjens2017].
+**4. Discussion** (~800 words)
 
-However, a methodological gap limits the clinical relevance of most published work. The majority of deep learning KL grading studies train and evaluate on radiologist-assigned consensus labels, predominantly from the Osteoarthritis Initiative (OAI) — a longitudinal research cohort with a standardised PA fixed-flexion weight-bearing acquisition protocol. Real-world clinical radiograph archives differ from research cohorts in acquisition variability, patient demographics, and critically, label provenance. Large-scale clinical datasets increasingly use deep learning inference rather than radiologist grading to generate labels at scale, raising the question of whether models trained on DL-inferred labels can generalise to radiologist-graded ground truth — and whether performance differences reflect label noise, domain shift, or both.
+- 4.1 Principal findings summary
+- 4.2 Model comparison — which architecture and why
+- 4.3 Grade-1 failure — label noise vs architectural limitation
+    - Comparison to Zhao et al. 2024 meta-analysis benchmark
+- 4.4 Ordinal loss — did it help?
+    - Compare to v1 results (standard cross-entropy)
+- 4.5 Generalisation — MRKR to OAI/Kaggle
+    - DL-inferred vs radiologist labels
+    - Domain shift interpretation
+- 4.6 Fairness across subgroups
+    - Sex, race, weightbearing findings
+    - Clinical implications
+- 4.7 Limitations
+    - DL-inferred labels
+    - No knee joint detection
+    - ~3-5% flip flag errors
+    - 10,000 image subset
+    - Single external validation dataset
+- 4.8 Future directions
+    - Knee joint detection with YOLO
+    - 20K dataset expansion
+    - Uncertainty quantification
+    - Multimodal architecture with clinical metadata
 
-This study addresses that question directly using the Emory Knee Radiograph (MRKR) dataset [@price2024emorykneeradiographmrkr], a multi-site real-world clinical archive with DL-inferred KL labels, as the primary training dataset, and the OAI/Kaggle dataset with radiologist-graded labels as an external validation set. Three CNN architectures — ResNet50, DenseNet121, and EfficientNet-B0 — are compared under identical conditions, and subgroup analyses by sex, race, ethnicity, weightbearing status, and age group assess model fairness across clinically relevant demographic strata.
+---
 
-# Methods
+**5. Conclusions** (~200 words)
+- Key findings
+- Clinical implications
+- Recommendations for deployment
 
-## Study Design
+---
 
-This study was designed as a retrospective diagnostic performance evaluation using a multi-site real-world clinical dataset for training and a standardised research cohort for external validation. Reporting was informed by the TRIPOD+AI framework for transparent reporting of machine learning prediction models. No patient data were collected; all images were sourced from publicly available, anonymised datasets under open licences. No ethics approval was required.
+**References**
 
-The study addressed four pre-specified objectives: (1) training and comparing three CNN architectures on MRKR data with DL-inferred KL labels; (2) evaluating cross-dataset generalisation by applying the best-performing model to the OAI/Kaggle dataset with radiologist-graded ground truth; (3) characterising grade-specific performance failure with particular attention to KL grade 1; and (4) assessing model fairness through subgroup analysis by sex, race, ethnicity, weightbearing status, age group, and laterality.
 
-## Primary Training Dataset — MRKR
+**Appendices** (do not count toward word limit)
+- Appendix A: Filter cascade detailed numbers
+- Appendix B: Full per-grade metrics all seeds
+- Appendix C: GitHub repository link and README
 
-The Emory Knee Radiograph (MRKR) dataset comprises 503,261 knee radiographs acquired at Emory University Health System across multiple clinical sites [@price2024emorykneeradiographmrkr]. Images are available via the AWS Open Data Registry (data.hitilab.com) under a CC-BY-SA licence and include rich metadata: laterality, view position, weightbearing status, arthroplasty flag, and demographic variables (age, sex, race, ethnicity) merged from MRKR_demographics.csv.
 
-KL grade labels in MRKR are DL-inferred (fields: L_KLG_inference and R_KLG_inference), not radiologist-assigned. This is a deliberate feature of the study design: the gap between model performance on MRKR and on radiologist-graded external validation is itself the primary research question.
 
-A working subset of 10,000 images was constructed by stratified random sampling of 2,000 images per KL grade (0–4). This balanced subset was used for all model training and internal evaluation. The dataset includes both weightbearing and non-weightbearing images and bilateral knee images, reflecting real-world clinical diversity.
-
-## External Validation Dataset — OAI/Kaggle
-
-The Knee Osteoarthritis Dataset with Severity Grading [@shashwat2021], sourced from the Osteoarthritis Initiative (OAI) and available on Kaggle (CC BY 4.0), comprises approximately 9,786 plain anteroposterior knee radiographs with KL grades 0–4 assigned by trained radiologists. Images were acquired under a standardised PA fixed-flexion weight-bearing protocol across four US clinical sites. This dataset was used for inference only — no retraining was performed on it. Its radiologist-graded labels provide a human consensus ground truth against which MRKR-trained model performance can be measured, directly testing whether DL-inferred label training generalises to radiologist-graded evaluation.
-
-## DICOM to PNG Conversion
-
-MRKR images are stored in DICOM format with JPEG Lossless compression. A one-time preprocessing pipeline was applied prior to training using `pydicom` and `pylibjpeg`. Each image was decoded, pixel values normalised to the \[0, 255\] uint8 range, and inversion corrected using the `PhotometricInterpretation` DICOM tag (MONOCHROME1 images were inverted to standard radiographic convention, where bone appears bright). Images were saved as three-channel RGB PNG files for compatibility with ImageNet-pretrained backbones. This conversion was performed once and outputs cached; it was not repeated at training time.
-
-## Image Preprocessing and Augmentation
-
-All images were resized to 512×512 pixels. This resolution was selected because the median MRKR DICOM resolution is 3,028×2,539 pixels; downsampling to 224×224 pixels — standard for ImageNet benchmarks — discards fine joint space detail critical for discriminating KL grades 0, 1, and 2. Grayscale images were represented as three-channel RGB to enable use of ImageNet-pretrained weights [@sharma2025; @olsson2021]. Pixel values were normalised using ImageNet channel means (0.485, 0.456, 0.406) and standard deviations (0.229, 0.224, 0.225).
-
-Data augmentation was applied to training images only. Random rotation within ±10° was applied to simulate positioning variation. Random horizontal flip (p=0.5) was included because MRKR contains both left and right knees and bilateral images, unlike the OAI/Kaggle dataset which was standardised to a single orientation; horizontal flip is therefore clinically plausible in this context. No augmentation was applied to validation or test images.
-
-Class imbalance was addressed at the data level through stratified random sampling of 2,000 images per KL grade, producing a balanced training set. No algorithmic compensation — oversampling or loss weighting — was required.
-
-## Candidate Architectures
-
-Three CNN architectures were selected for comparative evaluation, all pretrained on ImageNet.
-
-**ResNet50** is a 50-layer residual network whose skip connections enable effective feature transfer to medical imaging tasks [@olsson2021; @sharma2025]. It provides a well-validated baseline for KL grading and is the most widely reported architecture in the KL grading literature, facilitating comparison with published benchmarks [@tiulpin2019].
-
-**DenseNet121** was selected based on its competitive performance in comparative KL grading studies [@gour2023]. The dense connectivity pattern — each layer receiving feature maps from all preceding layers — encourages feature reuse and produces compact representations suited to the subtle texture-level differences between KL grades 0, 1, and 2. DenseNet121 has been widely validated in radiographic analysis tasks, including chest X-ray pathology detection [@litjens2017].
-
-**EfficientNet-B0** simultaneously optimises network depth, width, and input resolution using a principled scaling coefficient [@tan2019efficientnet]. Dipto and Goni (2024) found EfficientNet ensembles outperformed other architectures for KL grading [@dipto2024]. EfficientNet's parameter efficiency — comparable accuracy at lower computational cost — is relevant for clinical deployment in resource-constrained settings.
-
-In all three architectures, the classification head was replaced with a linear layer mapping to five KL grade classes, and all layers were fine-tuned end-to-end.
-
-## Training Configuration
-
-All three architectures were trained under identical conditions. Full configuration is summarised in Table 1.
-
-| Parameter     | Value                                          |
-|---------------|------------------------------------------------|
-| Architectures | ResNet50, DenseNet121, EfficientNet-B0         |
-| Pretraining   | ImageNet                                       |
-| Image size    | 512×512 px                                     |
-| Epochs        | 30 (early stopping, patience = 7)              |
-| Learning rate | 0.0001                                         |
-| Optimiser     | AdamW (weight decay 1e-4)                      |
-| Loss function | Standard CrossEntropyLoss (balanced data)      |
-| Batch size    | 32                                             |
-| Hardware      | NVIDIA GPU, CSD3 (confirm type after training) |
-| Seed          | 42                                             |
-
-: Training configuration — identical for all three architectures
-
-## External Validation Protocol
-
-The best-performing MRKR-trained model was evaluated on the OAI/Kaggle test set without retraining. Performance metrics were computed identically to the internal evaluation. The gap between MRKR test set performance and OAI/Kaggle performance was interpreted as a combined measure of label noise (DL-inferred versus human consensus) and domain shift (multi-site real-world acquisition versus standardised research protocol). Disentangling these two sources is acknowledged as a limitation and is proposed as a direction for future work.
-
-## Subgroup Analysis
-
-To assess model fairness and generalisability, test set performance was stratified across the subgroups listed in Table 2. Balanced accuracy and grade 1 recall were the primary fairness metrics, selected for their robustness to residual class imbalance in subgroup strata.
-
-| Variable            | Categories                                      | Rationale                              |
-|---------------------|-------------------------------------------------|----------------------------------------|
-| Weightbearing status| Weightbearing / Non-weightbearing               | Acquisition effect on joint space      |
-| Sex                 | Male / Female                                   | OA prevalence and severity differ      |
-| Race                | Caucasian / African American / Other            | Algorithmic fairness                   |
-| Ethnicity           | Hispanic / Non-Hispanic                         | Supplementary fairness axis            |
-| Age group           | <40 / 40–49 / 50–59 / 60–69 / 70+              | OA prevalence increases with age       |
-| Laterality          | Left / Right                                    | Laterality bias check                  |
-
-: Subgroup analysis variables, categories, and clinical rationale
-
-## Evaluation
-
-Model performance was evaluated on the held-out test set for all experiments. The primary metrics were balanced accuracy and macro-averaged F1-score, selected for robustness to any residual imbalance in the test set. Mean absolute error (MAE) was reported as an ordinal-aware metric reflecting the clinical cost of distant-grade errors. Per-grade precision, recall, F1-score, and AUC were calculated for each KL grade. Overall accuracy was reported as a secondary metric only. For cross-dataset comparison, the performance gap between MRKR internal test and OAI/Kaggle external validation was reported for each metric.
-
-## Grad-CAM Attention Map Audit
-
-Gradient-weighted Class Activation Mapping (Grad-CAM) was applied as an exploratory analysis to generate saliency maps for a stratified random sample of 50 test images from the best-performing architecture, comprising 10 images per KL grade [@selvaraju2017]. Saliency maps were overlaid on original images and assessed by the first author against a pre-defined anatomical plausibility checklist evaluating attention toward the medial and lateral joint compartments, joint space width, osteophyte margins, and subchondral bone density. This analysis was exploratory rather than a primary study contribution and was used to investigate mechanistic failure patterns at KL grade 1.
-
-# Results
-
-## Dataset Characteristics
-
-*Figure: Filter cascade table showing MRKR record counts at each exclusion step \[to be added after data processing\]*
-
-| Characteristic         | MRKR working subset (n=10,000) |
-|------------------------|-------------------------------|
-| Images per KL grade    | 2,000 (balanced)              |
-| Sex: Female            | [XX] ([XX]%)                  |
-| Sex: Male              | [XX] ([XX]%)                  |
-| Race: Caucasian        | [XX] ([XX]%)                  |
-| Race: African American | [XX] ([XX]%)                  |
-| Race: Other            | [XX] ([XX]%)                  |
-| Ethnicity: Hispanic    | [XX] ([XX]%)                  |
-| Age: mean (SD)         | [XX] ([XX])                   |
-| Weightbearing images   | [XX] ([XX]%)                  |
-
-: MRKR working subset demographic summary
-
-## Model Comparison — MRKR Test Set
-
-| Metric             | ResNet50 | DenseNet121 | EfficientNet-B0 |
-|--------------------|----------|-------------|-----------------|
-| Balanced accuracy  | [XX]     | [XX]        | [XX]            |
-| Macro F1           | [XX]     | [XX]        | [XX]            |
-| MAE                | [XX]     | [XX]        | [XX]            |
-| Grade 1 recall     | [XX]     | [XX]        | [XX]            |
-| Grade 1 F1         | [XX]     | [XX]        | [XX]            |
-
-: Model comparison on MRKR internal test set
-
-\[To be completed after training: identify the best-performing architecture on grade 1 recall and macro F1, and report which model is selected for external validation and subgroup analysis.\]
-
-## Per-Grade Performance
-
-| KL Grade  | Description | Precision | Recall | F1   | AUC  | Support |
-|-----------|-------------|-----------|--------|------|------|---------|
-| Grade 0   | Normal      | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Grade 1   | Doubtful    | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Grade 2   | Mild        | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Grade 3   | Moderate    | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Grade 4   | Severe      | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Macro avg | —           | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-
-: Per-grade metrics — ResNet50, MRKR internal test set
-
-| KL Grade  | Description | Precision | Recall | F1   | AUC  | Support |
-|-----------|-------------|-----------|--------|------|------|---------|
-| Grade 0   | Normal      | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Grade 1   | Doubtful    | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Grade 2   | Mild        | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Grade 3   | Moderate    | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Grade 4   | Severe      | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Macro avg | —           | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-
-: Per-grade metrics — DenseNet121, MRKR internal test set
-
-| KL Grade  | Description | Precision | Recall | F1   | AUC  | Support |
-|-----------|-------------|-----------|--------|------|------|---------|
-| Grade 0   | Normal      | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Grade 1   | Doubtful    | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Grade 2   | Mild        | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Grade 3   | Moderate    | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Grade 4   | Severe      | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-| Macro avg | —           | [XX]      | [XX]   | [XX] | [XX] | [XX]    |
-
-: Per-grade metrics — EfficientNet-B0, MRKR internal test set
-
-*Figures: Per-grade AUC, confusion matrix, and grade metrics bar chart for each architecture \[to be added after training\]*
-
-## External Validation — OAI/Kaggle
-
-| Metric            | MRKR test set | OAI/Kaggle | Gap   |
-|-------------------|---------------|------------|-------|
-| Balanced accuracy | [XX]          | [XX]       | [XX]  |
-| Macro F1          | [XX]          | [XX]       | [XX]  |
-| MAE               | [XX]          | [XX]       | [XX]  |
-| Grade 1 recall    | [XX]          | [XX]       | [XX]  |
-| Grade 1 F1        | [XX]          | [XX]       | [XX]  |
-
-: External validation results — best-performing MRKR model vs OAI/Kaggle (radiologist-graded ground truth)
-
-\[To be completed: interpret the performance gap; discuss whether it is larger at grade 1 than at other grades; note whether the direction of error shifts between datasets.\]
-
-## Subgroup Analysis
-
-| Subgroup                   | n    | Balanced accuracy | Grade 1 recall |
-|----------------------------|------|-------------------|----------------|
-| Weightbearing              | [XX] | [XX]              | [XX]           |
-| Non-weightbearing          | [XX] | [XX]              | [XX]           |
-| Female                     | [XX] | [XX]              | [XX]           |
-| Male                       | [XX] | [XX]              | [XX]           |
-| Caucasian                  | [XX] | [XX]              | [XX]           |
-| African American           | [XX] | [XX]              | [XX]           |
-| Race: Other                | [XX] | [XX]              | [XX]           |
-| Hispanic                   | [XX] | [XX]              | [XX]           |
-| Non-Hispanic               | [XX] | [XX]              | [XX]           |
-| Age <40                    | [XX] | [XX]              | [XX]           |
-| Age 40–49                  | [XX] | [XX]              | [XX]           |
-| Age 50–59                  | [XX] | [XX]              | [XX]           |
-| Age 60–69                  | [XX] | [XX]              | [XX]           |
-| Age 70+                    | [XX] | [XX]              | [XX]           |
-| Left knee                  | [XX] | [XX]              | [XX]           |
-| Right knee                 | [XX] | [XX]              | [XX]           |
-
-: Subgroup analysis — balanced accuracy and grade 1 recall by demographic and acquisition subgroup
-
-\[To be completed: flag any subgroup where balanced accuracy or grade 1 recall falls substantially below the overall test set figure; interpret the clinical and fairness implications.\]
-
-# Discussion
-
-## Principal Findings
-
-\[To be completed after training: summarise the three principal findings — (1) which architecture performed best overall and at grade 1; (2) the magnitude of the cross-dataset performance gap and what it implies about label noise and domain shift; (3) the subgroup with the most pronounced performance disparity and what it means for equitable deployment.\]
-
-## Grade-Specific Failure at the KL Grade 1 Boundary
-
-The concentration of model failure at KL grade 1 is a systematic finding across the deep learning KL grading literature and is not architecture-specific. KL grade 1 is defined by possible osteophytes and equivocal joint space changes — features that are by definition uncertain in the original Kellgren and Lawrence criteria [@kellgren1957]. Inter-observer kappa values at this boundary are consistently below 0.70 among experienced readers [@vaattovaara2025], meaning that any model trained on these labels — whether radiologist-assigned or DL-inferred — learns from a noisy signal. Zhao et al. reported pooled sensitivity of only 64% for KL grade 1 across 19 deep learning studies [@zhao2024], suggesting the grade 1 problem is a structural feature of the field. The implication for clinical deployment is clear: automated systems should flag grade 1 outputs for mandatory human review rather than treating them as equivalent in confidence to grade 3 or grade 4 predictions.
-
-## DL-Inferred Labels Versus Radiologist Ground Truth
-
-The performance gap between MRKR internal test set and OAI/Kaggle external validation reflects two confounded sources of difference: label noise, arising from DL-inferred versus human consensus grading, and domain shift, arising from multi-site real-world clinical acquisition versus a standardised research protocol. These cannot be fully disentangled in the current design without a matched dataset where both label types and acquisition protocols are controlled. Nonetheless, the direction and magnitude of the gap provide clinically meaningful information: a large gap concentrated at grade 1 would implicate label noise as the dominant factor, while uniform degradation across grades would be more consistent with domain shift. \[Insert interpretation once results are available.\] This question — whether large-scale DL-inferred label datasets can serve as reliable training sources for clinically deployable models — is of broad relevance to the field and is underrepresented in published comparative studies.
-
-## Fairness and Subgroup Analysis
-
-Performance variation across sex, race, and ethnicity subgroups raises questions about algorithmic fairness in automated KL grading. \[Insert specific findings once results are available.\] The MRKR dataset, with substantial African American representation, provides a demographically more diverse training population than most published KL grading studies, which have predominantly relied on the OAI — a predominantly Caucasian research cohort [@tiulpin2019]. Whether this diversity translates to more equitable performance across racial and ethnic groups, or whether DL-inferred label quality varies across demographic strata, is a key output of the subgroup analysis.
-
-## Clinical Interpretation of Attention Patterns
-
-Grad-CAM analysis provided exploratory mechanistic insight into model failure at grade 1. In correctly classified cases, saliency was directed toward the medial and lateral joint compartments — anatomically appropriate attention consistent with the radiographic basis of KL grading. In misclassified grade 1 cases, attention was more diffuse, directed toward soft tissue margins or image periphery rather than joint space, suggesting the model could not identify the subtle osteophyte formation and equivocal joint space changes that define early OA. This finding is consistent with the broader argument that automated systems lack the clinical contextual information — patient age, BMI, symptom history — that a human radiographer uses to resolve early-grade ambiguity.
-
-## Limitations
-
-Several limitations warrant acknowledgement. First, MRKR labels are DL-inferred, not radiologist-assigned, meaning training labels are themselves an approximation of clinical ground truth. Second, the working subset of 10,000 images represents approximately 2% of the full MRKR archive; the sample may not capture the full heterogeneity of the clinical population. Third, the Grad-CAM audit was conducted by a single assessor without formal inter-rater agreement assessment, limiting the strength of mechanistic conclusions. Fourth, multi-seed training was not performed in this study; stability across random initialisations is a direction for future work.
-
-## Future Directions
-
-Three directions are prioritised. First, disentangling label noise from domain shift requires a dataset with both DL-inferred and radiologist-assigned labels for the same images; the full MRKR archive may support this if radiologist review of a sample subset is feasible. Second, multimodal architectures incorporating clinical metadata — patient age, BMI, and weightbearing status — available in MRKR demographics files would more closely replicate the information available to a human radiographer at the grade 1 boundary. Third, multi-seed training and external validation on a UK NHS-sourced radiograph dataset would strengthen reproducibility and generalisability claims ahead of any clinical translation.
-
-# Conclusions
-
-\[Author to write (~200 words). Structure: (1) Three CNN architectures were trained on MRKR DL-inferred label data and evaluated internally; (2) External validation on OAI/Kaggle radiologist-graded data quantified the combined effect of label noise and domain shift; (3) Grade 1 remained the dominant failure mode across all architectures, consistent with the structural difficulty of the early OA boundary; (4) Subgroup analysis identified \[finding\] as the most clinically significant fairness concern; (5) Clinical implication: automated KL grading is suitable as a screening and triage tool, with grade 1 outputs requiring mandatory human review; (6) Future work: multimodal architecture with clinical metadata and external validation on clinically acquired datasets.\]
-
-# Declarations
-
-## Ethics Approval
-
-This study used publicly available, anonymised data released under open licences (CC-BY-SA for MRKR; CC BY 4.0 for OAI/Kaggle). No ethics approval was required.
-
-## Availability of Data and Materials
-
-MRKR dataset: <https://data.hitilab.com> (controlled access via AWS Open Data Registry).
-OAI/Kaggle dataset: <https://www.kaggle.com/datasets/shashwatwork/knee-osteoarthritis-dataset-with-severity>
-
-## Code Availability
-
-All code is available at: <https://github.com/tmzendah/HCDS_Mod05>
-
-## Competing Interests
-
-The author declares no competing interests.
-
-## Acknowledgements
-
-This work was conducted as part of the MSt Healthcare Data Science programme at the University of Cambridge. Training was performed on the Cambridge Service for Data-Driven Discovery (CSD3).
-
-# References
