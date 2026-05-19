@@ -1,6 +1,8 @@
-# Data — too large for GitHub (download from MRKR / Kaggle)
+# Data — too large for GitHub (see data/README.md for download instructions)
 data/raw/
 data/processed/
+data/metadata/
+!data/README.md
 
 # Model checkpoints — too large for GitHub
 checkpoints/*

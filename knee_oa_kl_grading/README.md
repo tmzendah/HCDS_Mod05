@@ -77,25 +77,14 @@ knee_oa_kl_grading/
 
 ## Datasets
 
-### Primary training dataset — MRKR
+Data files are **not included** in this repository. Full download instructions, expected folder structures, and AWS/Kaggle CLI commands are in [`data/README.md`](data/README.md).
 
-The Emory Knee Radiograph (MRKR) dataset comprises 503,261 knee radiographs from 83,011 patients. Approximately 40% of patients are African American, making it one of the most demographically diverse knee imaging datasets available. Images are provided in DICOM format alongside clinical metadata including patient-reported pain scores, diagnostic and procedural codes, image laterality, view type, and presence of hardware. KL grades in MRKR are DL-inferred rather than radiologist-assigned.
-
-- **Access:** [AWS Open Data Registry](https://registry.opendata.aws/mrkr) — accessed 17 May 2026
-- **Documentation:** <https://github.com/Emory-HITI/MRKR>
-- **Licence:** CC-BY-SA
-- **Acknowledgement:** MD.ai provided assistance with image de-identification.
-
-### External validation dataset — OAI/Kaggle
-
-The Kaggle Knee Osteoarthritis Dataset with Severity Grading provides radiologist-assigned KL grades and is used for external validation only.
-
-- **Access:** <https://www.kaggle.com/datasets/shashwatwork/knee-osteoarthritis-dataset-with-severity>
-- **Licence:** CC BY 4.0
+| Dataset | Role | Source | Licence |
+|---|---|---|---|
+| MRKR (Emory) | Primary training | [AWS Open Data](https://registry.opendata.aws/mrkr) | CC-BY-SA |
+| OAI/Kaggle | External validation | [Kaggle](https://www.kaggle.com/datasets/shashwatwork/knee-osteoarthritis-dataset-with-severity) | CC BY 4.0 |
 
 **Ethics:** Both datasets are publicly available and fully anonymised. No identifiable patient data are included and no additional ethical approval was required.
-
-Data files are not included in this repository. Place downloaded files in `data/raw/`.
 
 ---
 
@@ -109,7 +98,7 @@ pip install -e .
 ```
 
 ### 2. Download datasets
-See Dataset section above. Place MRKR DICOMs in `data/raw/mrkr_dicoms/` and OAI/Kaggle images in `data/raw/kaggle_oai/`.
+Follow the instructions in [`data/README.md`](data/README.md). Place MRKR DICOMs in `data/raw/mrkr/dicoms/` and OAI/Kaggle images in `data/raw/kaggle_oai/`.
 
 ### 3. Convert DICOMs to JPEG
 ```bash
