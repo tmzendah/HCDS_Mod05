@@ -4,12 +4,6 @@ Talita Mzendah | MSt Healthcare Data Science | University of Cambridge
 
 ---
 
-## Abstract
-
-[Paste your final abstract here once complete]
-
----
-
 ## Project overview
 
 This project trains ResNet50, DenseNet121, and EfficientNet-B0 convolutional neural networks to classify knee osteoarthritis severity from plain radiographs using the Kellgren-Lawrence (KL) grading system. Models are trained on the MRKR dataset using DL-inferred KL pseudo-labels and evaluated against radiologist-graded labels from the OAI/Kaggle dataset, with a focus on early-grade performance and subgroup fairness.
