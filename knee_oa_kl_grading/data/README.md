@@ -25,10 +25,10 @@ data/raw/mrkr/
             └── *.dcm
 ```
 
-Convert DICOMs to JPEG before training:
+Convert DICOMs to PNG before training:
 
 ```bash
-python scripts/convert_dicom_to_jpeg.py \
+python scripts/convert_dicom_to_png.py \
   --input_dir data/raw/mrkr/dicoms \
   --output_dir data/processed \
   --size 512
@@ -67,7 +67,7 @@ data/raw/kaggle_oai/
 
 ## Processed data
 
-`data/processed/` is populated by `scripts/convert_dicom_to_jpeg.py` and `scripts/prepare_data.py`. Do not commit these files.
+`data/processed/` is populated by `scripts/convert_dicom_to_png.py` and `scripts/prepare_data.py`. Do not commit these files.
 
 ## Metadata
 

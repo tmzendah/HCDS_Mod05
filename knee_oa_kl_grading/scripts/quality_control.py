@@ -28,7 +28,7 @@ def assess_image(img_path: Path) -> dict:
 
 def main(args):
     image_dir = Path(args.image_dir)
-    images = list(image_dir.rglob("*.jpg")) + list(image_dir.rglob("*.png"))
+    images = list(image_dir.rglob("*.png"))
     print(f"Assessing {len(images)} images...")
 
     records = [assess_image(p) for p in images]

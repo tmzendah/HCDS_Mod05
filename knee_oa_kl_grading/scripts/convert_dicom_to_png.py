@@ -1,4 +1,4 @@
-"""Convert MRKR DICOM files to JPEG for model training."""
+"""Convert MRKR DICOM files to PNG for model training."""
 
 import argparse
 import os
@@ -30,7 +30,7 @@ def main(args):
 
     for dcm_path in dicom_files:
         rel = dcm_path.relative_to(input_dir)
-        out_path = (output_dir / rel).with_suffix(".jpg")
+        out_path = (output_dir / rel).with_suffix(".png")
         out_path.parent.mkdir(parents=True, exist_ok=True)
         convert_dicom(dcm_path, out_path, size=args.size)
 
@@ -38,7 +38,7 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Convert DICOM files to JPEG")
+    parser = argparse.ArgumentParser(description="Convert DICOM files to PNG")
     parser.add_argument("--input_dir", required=True)
     parser.add_argument("--output_dir", required=True)
     parser.add_argument("--size", type=int, default=512)

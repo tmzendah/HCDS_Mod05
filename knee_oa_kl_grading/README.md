@@ -21,7 +21,7 @@ This project trains ResNet50, DenseNet121, and EfficientNet-B0 convolutional neu
 ```
 knee_oa_kl_grading/
 ├── scripts/                 ← Production Python scripts
-│   ├── convert_dicom_to_jpeg.py
+│   ├── convert_dicom_to_png.py
 │   ├── quality_control.py
 │   ├── flag_poor_quality.py
 │   ├── prepare_data.py
@@ -100,9 +100,9 @@ pip install -e .
 ### 2. Download datasets
 Follow the instructions in [`data/README.md`](data/README.md). Place MRKR DICOMs in `data/raw/mrkr/dicoms/` and OAI/Kaggle images in `data/raw/kaggle_oai/`.
 
-### 3. Convert DICOMs to JPEG
+### 3. Convert DICOMs to PNG
 ```bash
-python scripts/convert_dicom_to_jpeg.py --input_dir data/raw/mrkr_dicoms --output_dir data/processed --size 512
+python scripts/convert_dicom_to_png.py --input_dir data/raw/mrkr_dicoms --output_dir data/processed --size 512
 ```
 
 ### 4. Run quality control
