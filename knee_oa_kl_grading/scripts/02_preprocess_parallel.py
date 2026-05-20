@@ -82,8 +82,7 @@ def crop_bilateral(image, side, flip_flag):
 
     return image.crop(box)
 
-
-def apply_clahe(pil_img, clip_limit=2.0, grid_size=(8, 8)):
+def apply_clahe(pil_img, clip_limit=2.0, grid_size=(8,8)):
     """Apply CLAHE to a PIL image (grayscale)."""
     if pil_img.mode != 'L':
         pil_img = pil_img.convert('L')
@@ -92,11 +91,9 @@ def apply_clahe(pil_img, clip_limit=2.0, grid_size=(8, 8)):
     enhanced = clahe.apply(img_np)
     return Image.fromarray(enhanced)
 
-
 def resize_image(pil_img, target_size):
     """Resize PIL image to target size (width, height)."""
     return pil_img.resize(target_size, Image.Resampling.LANCZOS)
-
 
 def process_one_row(row, output_dir):
     """Process a single row from the DataFrame – for parallel execution."""
@@ -130,15 +127,15 @@ def process_one_row(row, output_dir):
 
     resized.save(output_path, "PNG")
 
+    # Return record for manifest
     record = {
         "cropped_path": output_path,
         "kl_grade": kl,
         "patient_id": patient_id,
         "side": side,
-        "original_image": img_filename,
+        "original_image": img_filename
     }
     return record, None
-
 
 # =============================================================================
 # Main
@@ -146,8 +143,7 @@ def process_one_row(row, output_dir):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--test', action='store_true', help='Process only first 100 images')
-    parser.add_argument('--workers', type=int, default=None,
-                        help='Number of CPU cores (default: all available)')
+    parser.add_argument('--workers', type=int, default=None, help='Number of CPU cores (default: all available)')
     args = parser.parse_args()
 
     print("=" * 60)
@@ -170,19 +166,26 @@ def main():
         print("Available columns:", df.columns.tolist())
         sys.exit(1)
 
+    # Convert horizontal_flip to float if needed
     df['horizontal_flip'] = df['horizontal_flip'].astype(float)
 
+    # Test mode
     if args.test:
         df = df.head(100)
         print("TEST MODE: processing first 100 rows only")
 
-    n_workers = args.workers or os.cpu_count()
+    # Determine number of workers
+    if args.workers:
+        n_workers = args.workers
+    else:
+        n_workers = os.cpu_count()
     print(f"Using {n_workers} CPU workers")
 
     # 2. Process in parallel
     results = []
     errors = []
 
+    # Use functools.partial to fix output_dir argument
     process_func = functools.partial(process_one_row, output_dir=OUTPUT_IMAGE_DIR)
 
     with ProcessPoolExecutor(max_workers=n_workers) as executor:
@@ -205,16 +208,15 @@ def main():
         print(f"Successfully processed: {len(results)} images")
         if errors:
             print(f"Errors: {len(errors)}")
-            error_log = OUTPUT_MANIFEST.replace('.csv', '_errors.txt')
-            with open(error_log, 'w') as f:
-                f.write("\n".join(errors[:20]))
+            with open(OUTPUT_MANIFEST.replace('.csv', '_errors.txt'), 'w') as f:
+                f.write("\n".join(errors[:20]))  # first 20 errors
     else:
         print("No images processed successfully. Check errors above.")
 
+    # Quick stats
     if results:
         print("\nKL grade distribution in cropped set:")
         print(pd.Series([r['kl_grade'] for r in results]).value_counts().sort_index())
-
 
 if __name__ == "__main__":
     main()
