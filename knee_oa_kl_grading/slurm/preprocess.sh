@@ -6,14 +6,14 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=64G
-#SBATCH --partition=icelake    # or skylake, cpu – check CSD3 partitions
+#SBATCH --partition=icelake
 
-# Load environment
 source ~/.bashrc
 conda activate OAIKaggle
+cd ~/mrkr_klg
 
-# Run preprocessing (full dataset)
-python code/02_preprocess_parallel.py --workers 32
+# Test mode (small subset)
+python code/02_preprocess_parallel.py --test --workers 32
 
-# Optional: test mode
-# python code/02_preprocess_parallel.py --test --workers 32
+# When ready, remove --test and run full:
+# python code/02_preprocess_parallel.py --workers 32
