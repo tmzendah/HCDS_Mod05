@@ -123,7 +123,7 @@ python scripts/external_validate.py --config config/config.yaml
 quarto render report/report.qmd
 ```
 
-**On CSD3 HPC:** use the scripts in `slurm/` instead of running locally.
+**On CSD3 HPC:** run `scripts/00_setup.py` first to create the working directory structure and verify RDS data paths and GPU availability, then use the scripts in `slurm/` for training jobs.
 
 ---
 
