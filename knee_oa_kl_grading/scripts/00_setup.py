@@ -10,7 +10,7 @@ HPC    : Cambridge CSD3 (NVIDIA A100-SXM4-80GB)
 Env    : conda activate OAIKaggle (Python 3.11, torch 2.7.1+cu118)
 
 Directory structure created:
-  ~/mrkr_klg/
+  ~/MLOAIProject/
     code/          -- Python scripts and SLURM jobs
     data/          -- Small local files (smoke CSVs, manifests)
     eda/           -- EDA outputs (PNGs, JSONs)
@@ -43,7 +43,7 @@ RDS data paths (large files, not in repo):
 
 Usage:
   conda activate OAIKaggle
-  cd ~/mrkr_klg
+  cd ~/MLOAIProject
   python3 code/00_setup.py
 """
 
@@ -57,7 +57,7 @@ import subprocess
 # ─────────────────────────────────────────────────────────────────────────────
 
 HOME          = os.path.expanduser("~")
-PROJECT_DIR   = os.path.join(HOME, "mrkr_klg")
+PROJECT_DIR   = os.path.join(HOME, "MLOAIProject")
 RDS_BASE      = "/rds/user/tm922/hpc-work"
 RDS_DATA      = os.path.join(RDS_BASE, "data")
 
@@ -65,7 +65,7 @@ RDS_DATA      = os.path.join(RDS_BASE, "data")
 EXPECTED_PATHS = {
     "MRKR metadata CSV":        os.path.join(RDS_DATA, "mrkr", "MRKR_image_metadata.csv"),
     "MRKR demographics CSV":    os.path.join(RDS_DATA, "mrkr", "MRKR_demographics.csv"),
-    "MRKR working set CSV":     os.path.join(RDS_DATA, "mrkr", "mrkr_selected_v2.csv"),
+    "MRKR working set CSV":     os.path.join(RDS_DATA, "mrkr", "working_set.csv"),
     "MRKR PNG manifest":        os.path.join(RDS_DATA, "mrkr_png_v2", "mrkr_png_manifest.csv"),
     "MRKR cropped manifest":    os.path.join(RDS_DATA, "mrkr_cropped", "mrkr_cropped_manifest.csv"),
     "OAI/Kaggle train dir":     os.path.join(RDS_DATA, "knee_oa", "train"),
@@ -81,7 +81,6 @@ PROJECT_DIRS = [
     "logs",
     "notebooks",
     "results/crop_audit",
-    "results/crop_audit_v2",
     "results/figures",
     "runs",
 ]
