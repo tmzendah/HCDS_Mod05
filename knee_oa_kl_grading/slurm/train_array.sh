@@ -4,11 +4,13 @@
 #SBATCH --error=logs/train_%A_%a.err
 #SBATCH --array=0-8
 #SBATCH --time=12:00:00
+#SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
 #SBATCH --gres=gpu:1
-#SBATCH --partition=gpu-ampere
+#SBATCH --partition=ampere
+#SBATCH --account=TORABI-SL3-GPU
 
 MODELS=("resnet50" "densenet121" "efficientnet_b0")
 SEEDS=(42 123 456)
@@ -22,6 +24,7 @@ SEED=${SEEDS[$SEED_IDX]}
 
 source ~/.bashrc
 conda activate OAIKaggle
-cd ~/mrkr_klg
+cd ~/MLOAIProject
 
+echo "Running: python code/03_train.py --model $MODEL --seed $SEED --epochs 30"
 python code/03_train.py --model $MODEL --seed $SEED --epochs 30
