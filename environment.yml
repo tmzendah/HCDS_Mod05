@@ -4,7 +4,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.10
+  - python=3.11.15
   - pytorch=2.7.1
   - torchvision=0.22.1
   - cudatoolkit=11.8
@@ -15,5 +15,5 @@ dependencies:
   - pillow=12.1.1
   - pip:
     - opencv-python==4.13.0
-    - grad-cam==1.4.8
+    - grad-cam==1.5.5
     - quarto

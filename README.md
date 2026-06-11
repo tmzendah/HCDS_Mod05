@@ -185,7 +185,7 @@ Training was performed on the Cambridge Service for Data-Driven Discovery (CSD3)
 
 | Component | Version |
 |---|---|
-| Python | 3.10 |
+| Python | 3.11.15 |
 | PyTorch | 2.7.1+cu118 |
 | torchvision | 0.22.1+cu118 |
 | CUDA toolkit | 11.8 |
@@ -195,7 +195,7 @@ Training was performed on the Cambridge Service for Data-Driven Discovery (CSD3)
 | matplotlib | 3.10.8 |
 | Pillow | 12.1.1 |
 | opencv-python | 4.13.0 |
-| grad-cam | 1.4.8 |
+| grad-cam | 1.5.5 |
 
 Full specification in `environment.yml`.
 
