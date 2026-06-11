@@ -1,81 +1,105 @@
-# HCDS Module 05 — Does Loss Function Choice Affect Early Osteoarthritis Detection?
+# Does Loss Function Choice Affect Early Osteoarthritis Detection?
 
 **Talita Mzendah | MSt Healthcare Data Science | University of Cambridge**
 
 ---
 
-## Overview
+## Project summary
 
-This project investigates whether loss function choice affects early knee osteoarthritis (OA) detection in automated Kellgren-Lawrence (KL) grading. A 2×2 factorial design compares two training objectives (categorical cross-entropy and CORAL ordinal loss) across two CNN architectures (ResNet50 and EfficientNet-B0), trained across three random seeds on the Kaggle Knee OA Dataset (n=8,260 radiographs).
+Knee osteoarthritis (OA) is the most prevalent musculoskeletal condition globally, affecting an estimated 365 million people. Radiographic severity is graded using the Kellgren-Lawrence (KL) scale (0–4), with KL Grade 1 — doubtful OA — carrying disproportionate clinical significance as the earliest detectable stage. Despite this, KL1 remains the hardest grade to detect reliably, with a meta-analytic sensitivity of only 0.64 across 19 published studies.
+
+This project investigates whether loss function choice is a primary driver of KL1 detection failure. Standard categorical cross-entropy (CE) treats KL grades as unordered categories and ignores the ordinal structure of the scale, providing no incentive to attend to grade boundaries. CORAL ordinal loss reformulates grading as rank regression and penalises distant misclassifications more heavily than adjacent ones.
+
+A 2×2 factorial design compared CE and CORAL loss across two CNN architectures (ResNet50 and EfficientNet-B0), trained across three random seeds on the Kaggle Knee OA Dataset (n=8,260 radiographs, KL grades 0–4). CORAL consistently improved KL1 recall by 86–168% relative to CE. EfficientNet-B0 + CORAL achieved the best overall performance (QWK = 0.809 ± 0.008). Despite these gains, all configurations remained below the meta-analytic KL1 benchmark, suggesting that dataset limitations — particularly the absence of acquisition metadata and clinical context — are a fundamental barrier that loss function optimisation alone cannot overcome.
 
 ---
 
-## Repository structure
+## Research question
 
-```
-HCDS_Mod05/
-├── README.md
-├── environment.yml
-├── requirements.txt
-├── LICENSE
-│
-├── configs/                        ← Per-experiment YAML configs
-│   ├── resnet50_ce.yaml
-│   ├── resnet50_coral.yaml
-│   ├── efficientnet_b0_ce.yaml
-│   └── efficientnet_b0_coral.yaml
-│
-├── src/                            ← Modular Python source
-│   ├── data.py
-│   ├── models.py
-│   ├── losses.py
-│   ├── train.py
-│   ├── evaluate.py
-│   ├── metrics.py
-│   ├── gradcam.py
-│   └── utils.py
-│
-├── notebooks/                      ← Analysis notebooks
-│   ├── 01_dataset_check_and_eda.ipynb
-│   ├── 02_training_summary.ipynb
-│   └── 03_results_figures.ipynb
-│
-├── scripts/                        ← Experiment runner scripts
-│   ├── run_all_experiments.sh
-│   ├── run_resnet50_ce.sh
-│   ├── run_resnet50_coral.sh
-│   ├── run_efficientnet_ce.sh
-│   └── run_efficientnet_coral.sh
-│
-├── results/                        ← Outputs (metrics, figures, Grad-CAM)
-│   ├── metrics_summary.csv
-│   ├── per_seed_results.csv
-│   ├── confusion_matrices/
-│   ├── figures/
-│   └── gradcam_examples/
-│
-├── reports/                        ← Report source and figures
-│   ├── report.qmd
-│   ├── references.bib
-│   ├── vancouver.csl
-│   ├── cambridge_logo.png
-│   └── report_figures/
-│
-└── docs/                           ← Supporting documentation
-    ├── dataset_access.md
-    ├── reproducibility.md
-    └── model_cards.md
-```
+> Does CORAL ordinal loss improve KL Grade 1 recall compared with categorical cross-entropy across CNN architectures for automated knee OA grading?
 
 ---
 
 ## Dataset
 
-The Kaggle Knee Osteoarthritis Dataset with Severity Grading (n=8,260 radiographs, KL grades 0–4) is not included in this repository. See `docs/dataset_access.md` for download instructions.
+**Kaggle Knee Osteoarthritis Dataset with Severity Grading**
+
+- Source: [https://www.kaggle.com/datasets/shashwatwork/knee-osteoarthritis-dataset-with-severity](https://www.kaggle.com/datasets/shashwatwork/knee-osteoarthritis-dataset-with-severity)
+- Licence: CC BY 4.0
+- Size: 8,260 anteroposterior knee radiographs, KL grades 0–4
+- Images are supplied as **preprocessed 224×224 single-knee radiographs** — no additional resizing or cropping is required
+- Already organised into predefined `train/`, `val/`, and `test/` folders (n=5,778 / 826 / 1,656; approximately 70/10/20)
+
+**Class distribution:**
+
+| KL Grade | Description | Train (n=5,778) | Validation (n=826) | Test (n=1,656) |
+|---|---|---|---|---|
+| KL0 | Normal | 2,286 (39.6%) | 328 (39.7%) | 639 (38.6%) |
+| KL1 | Doubtful | 1,046 (18.1%) | 153 (18.5%) | 296 (17.9%) |
+| KL2 | Mild | 1,516 (26.2%) | 212 (25.7%) | 447 (27.0%) |
+| KL3 | Moderate | 757 (13.1%) | 106 (12.8%) | 223 (13.5%) |
+| KL4 | Severe | 173 (3.0%) | 27 (3.3%) | 51 (3.1%) |
+
+**Access instructions:**
+
+```bash
+# Install Kaggle CLI
+pip install kaggle
+
+# Download dataset (requires Kaggle API token in ~/.kaggle/kaggle.json)
+kaggle datasets download -d shashwatwork/knee-osteoarthritis-dataset-with-severity
+unzip knee-osteoarthritis-dataset-with-severity.zip -d data/
+```
+
+The unzipped folder should contain `train/`, `val/`, and `test/` subfolders, each with grade subdirectories `0/` through `4/`.
 
 ---
 
-## Environment setup
+## Experimental design
+
+```
+2 architectures × 2 loss functions × 3 seeds = 12 training runs
+```
+
+| Configuration | Architecture | Loss | Seeds |
+|---|---|---|---|
+| ResNet50 + CE | ResNet50 (23.5M params) | Cross-entropy | 42, 123, 456 |
+| ResNet50 + CORAL | ResNet50 (23.5M params) | CORAL ordinal | 42, 123, 456 |
+| EfficientNet-B0 + CE | EfficientNet-B0 (4M params) | Cross-entropy | 42, 123, 456 |
+| EfficientNet-B0 + CORAL | EfficientNet-B0 (4M params) | CORAL ordinal | 42, 123, 456 |
+
+Both architectures were initialised with ImageNet pretrained weights. Differential learning rates were applied: backbone at lr=1×10⁻⁵, classification head at lr=1×10⁻⁴.
+
+---
+
+## Primary metrics
+
+| Metric | Description |
+|---|---|
+| **Quadratic Weighted Kappa (QWK)** | Field-standard metric; penalises distant grade errors proportionally. Clinical benchmark: 0.81. |
+| **KL1 recall** | Primary clinical outcome; measures detection of doubtful OA. Meta-analytic benchmark: 0.64. |
+
+**Key results:**
+
+| Configuration | QWK (mean ± SD) | KL1 Recall (mean ± SD) |
+|---|---|---|
+| ResNet50 + CE | — | 0.127 ± 0.012 |
+| ResNet50 + CORAL | — | 0.341 ± 0.019 (+168%) |
+| EfficientNet-B0 + CE | — | 0.190 ± 0.017 |
+| EfficientNet-B0 + CORAL | **0.809 ± 0.008** | **0.354 ± 0.009** (+86%) |
+
+---
+
+## How to reproduce
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/tmzendah/HCDS_Mod05.git
+cd HCDS_Mod05
+```
+
+### 2. Set up the environment
 
 ```bash
 conda env create -f environment.yml
@@ -88,11 +112,101 @@ Or with pip:
 pip install -r requirements.txt
 ```
 
----
+### 3. Download the dataset
 
-## Rendering the report
+Follow the access instructions in the Dataset section above. Place the data so the structure is:
+
+```
+data/
+├── train/0/  train/1/  train/2/  train/3/  train/4/
+├── val/0/    val/1/    val/2/    val/3/    val/4/
+└── test/0/   test/1/   test/2/   test/3/   test/4/
+```
+
+### 4. Run experiments
+
+Each configuration has a dedicated script. To run all 12 experiments:
+
+```bash
+bash scripts/run_all_experiments.sh
+```
+
+Or run individual configurations:
+
+```bash
+bash scripts/run_resnet50_ce.sh
+bash scripts/run_resnet50_coral.sh
+bash scripts/run_efficientnet_ce.sh
+bash scripts/run_efficientnet_coral.sh
+```
+
+> **Note:** Training was conducted on CSD3 HPC using SLURM. Scripts are configured for NVIDIA A100-SXM4-80GB GPU. Adjust partition and resource flags in each script for your environment.
+
+### 5. Evaluate and generate figures
+
+Results are written to `results/`. To reproduce figures used in the report, run:
+
+```bash
+jupyter notebook notebooks/03_results_figures.ipynb
+```
+
+### 6. Render the report
 
 ```bash
 cd reports/
 quarto render report.qmd
 ```
+
+---
+
+## Expected outputs
+
+| Output | Location | Description |
+|---|---|---|
+| `metrics_summary.csv` | `results/` | Per-grade precision, recall, F1, AUC for each configuration |
+| `per_seed_results.csv` | `results/` | QWK and KL1 recall per seed per configuration |
+| Confusion matrices | `results/confusion_matrices/` | Per-configuration confusion matrices |
+| Grad-CAM images | `results/gradcam_examples/` | Heatmaps for shared KL1 misclassification cases |
+| Report (Word/HTML) | `reports/` | Rendered from `report.qmd` via `quarto render` |
+
+---
+
+## Hardware
+
+Training was performed on the Cambridge Service for Data-Driven Discovery (CSD3) HPC:
+
+- **GPU:** NVIDIA A100-SXM4-80GB
+- **Cluster:** CSD3 (University of Cambridge)
+- All 12 training runs completed within the standard CSD3 GPU allocation
+
+---
+
+## Environment
+
+| Component | Version |
+|---|---|
+| Python | 3.10 |
+| PyTorch | 2.1.0 |
+| torchvision | 0.16.0 |
+| CUDA toolkit | 11.8 |
+| numpy | 1.24.0 |
+| pandas | 2.0.0 |
+| scikit-learn | 1.3.0 |
+| matplotlib | 3.7.2 |
+| Pillow | 10.0.0 |
+| opencv-python | 4.8.0 |
+| grad-cam | 1.4.8 |
+
+Full specification in `environment.yml`.
+
+---
+
+## Citation and licence
+
+**Dataset:** Kaggle Knee Osteoarthritis Dataset with Severity Grading — licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
+**Code:** This repository is licensed under the [MIT Licence](LICENSE).
+
+If you use this work, please cite:
+
+> Mzendah, T. (2026). *Does Loss Function Choice Affect Early Osteoarthritis Detection? Comparing Cross-Entropy and CORAL Ordinal Loss for Automated Kellgren-Lawrence Grading.* MSt Healthcare Data Science, University of Cambridge.
