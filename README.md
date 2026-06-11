@@ -194,7 +194,7 @@ Training was performed on the Cambridge Service for Data-Driven Discovery (CSD3)
 | scikit-learn | 1.8.0 |
 | matplotlib | 3.10.8 |
 | Pillow | 12.1.1 |
-| opencv-python | 4.13.0 |
+| opencv-python | 4.13.0.92 |
 | grad-cam | 1.5.5 |
 
 Full specification in `environment.yml`.
