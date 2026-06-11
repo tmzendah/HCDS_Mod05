@@ -183,29 +183,29 @@ All results are reported as mean ± SD across three random seeds on the held-out
 
 EfficientNet-B0 with CORAL loss achieved the highest mean QWK (0.8085 ± 0.0075), the only configuration to exceed the 0.81 "almost perfect" clinical benchmark [@landis1977]. @fig-metrics presents the full performance metrics across all four configurations. CORAL loss consistently improved QWK within both architectures: by +0.0183 for ResNet50 (paired t=5.497, p=0.016) and +0.0212 for EfficientNet-B0 (paired t=4.244, p=0.026). Overall accuracy remained comparable across loss functions within each architecture, indicating that the QWK improvement reflects a reduction in distant-grade errors rather than a wholesale accuracy gain.
 
-![Summary of performance metrics across all four configurations (mean ± SD, three seeds). EfficientNet-B0 + CORAL achieved the highest QWK, approaching the 0.81 clinical benchmark.](report_figures/06_metrics_summary.png){#fig-metrics fig-alt="Performance metrics summary" width="100%"}
+![Summary of performance metrics across all four configurations (mean ± SD, three seeds). EfficientNet-B0 + CORAL achieved the highest QWK, approaching the 0.81 clinical benchmark.](report_figures/metrics_summary.png){#fig-metrics fig-alt="Performance metrics summary" width="100%"}
 
 Training convergence across all configurations and seeds is shown in @fig-learning-curves. All models converged within 50 epochs; EfficientNet configurations displayed marginally faster convergence and lower final validation loss compared to ResNet50 across both loss functions.
 
-![Training loss and accuracy curves across all four configurations and three random seeds. Solid lines show training; dashed lines show validation. Shading represents ± SD across seeds.](report_figures/01_learning_curves.png){#fig-learning-curves fig-alt="Learning curves for all configurations" width="100%"}
+![Training loss and accuracy curves across all four configurations and three random seeds. Solid lines show training; dashed lines show validation. Shading represents ± SD across seeds.](report_figures/learning_curves.png){#fig-learning-curves fig-alt="Learning curves for all configurations" width="100%"}
 
 @fig-qwk shows the QWK distribution across seeds for all configurations, and @fig-confusion presents the confusion matrices on the held-out test set, illustrating the redistribution of classification errors under CORAL compared to CE.
 
-![Quadratic Weighted Kappa across all four configurations (mean ± SD, three seeds). CORAL loss improved QWK within both architectures; EfficientNet-B0 + CORAL was the top-performing configuration.](report_figures/04_qwk_comparison.png){#fig-qwk fig-alt="QWK comparison across configurations" width="100%"}
+![Quadratic Weighted Kappa across all four configurations (mean ± SD, three seeds). CORAL loss improved QWK within both architectures; EfficientNet-B0 + CORAL was the top-performing configuration.](report_figures/qwk_comparison.png){#fig-qwk fig-alt="QWK comparison across configurations" width="100%"}
 
-![Confusion matrices for all four configurations on the held-out test set (n=1,656), averaged across three seeds. CORAL redistributes errors toward adjacent grades compared to CE.](report_figures/05_confusion_matrices.png){#fig-confusion fig-alt="Confusion matrices" width="100%"}
+![Confusion matrices for all four configurations on the held-out test set (n=1,656), averaged across three seeds. CORAL redistributes errors toward adjacent grades compared to CE.](report_figures/confusion_matrices.png){#fig-confusion fig-alt="Confusion matrices" width="100%"}
 
 ### 3.2 KL Grade 1 Recall (Primary Clinical Outcome)
 
 KL1 recall showed the most clinically consequential differences across conditions (@fig-kl1). CE loss produced critically low KL1 recall in both architectures: ResNet50+CE achieved 0.127 ± 0.012 and EfficientNet+CE achieved 0.190 ± 0.017, well below the meta-analytic benchmark of 0.64 [@zhao2024]. CORAL loss produced substantial and consistent improvements: ResNet50+CORAL reached 0.341 ± 0.019 (+168% relative increase; paired t=10.534, p=0.004) and EfficientNet+CORAL reached 0.354 ± 0.009 (+86% relative increase; paired t=27.368, p=0.001). Despite this improvement, all configurations remained below the meta-analytic benchmark, indicating that ordinal loss is necessary but insufficient to fully resolve KL1 detection failure on this dataset.
 
-![KL Grade 1 recall comparison between CE and CORAL loss for ResNet50 and EfficientNet-B0 (mean ± SD, three seeds). Dashed line indicates meta-analytic benchmark of 0.64 [@zhao2024]. CORAL loss improved KL1 recall by 86–168% relative to CE across both architectures.](report_figures/03_kl1_recall_comparison.png){#fig-kl1 fig-alt="KL1 recall comparison between loss functions" width="100%"}
+![KL Grade 1 recall comparison between CE and CORAL loss for ResNet50 and EfficientNet-B0 (mean ± SD, three seeds). Dashed line indicates meta-analytic benchmark of 0.64 [@zhao2024]. CORAL loss improved KL1 recall by 86–168% relative to CE across both architectures.](report_figures/kl1_recall_comparison.png){#fig-kl1 fig-alt="KL1 recall comparison between loss functions" width="100%"}
 
 ### 3.3 Per-Grade Recall
 
 Per-grade recall profiles revealed a consistent pattern across all configurations (@fig-per-grade). KL0 recall was highest under CE loss (ResNet50+CE: 0.865 ± 0.028; EfficientNet+CE: 0.863 ± 0.017) but declined under CORAL (ResNet50+CORAL: 0.787 ± 0.008; EfficientNet+CORAL: 0.796 ± 0.003), indicating that CORAL redistributes predictive capacity away from the majority class toward intermediate grades. KL1 remained the worst-detected grade across all configurations. KL3 and KL4 showed moderate to good recall (0.53–0.77) across all configurations, suggesting that more advanced disease produces sufficiently discriminative radiographic features. The trade-off between KL0 and KL1 recall under CORAL versus CE is clinically interpretable — CE collapses toward the majority class while CORAL distributes more evenly across the ordinal scale.
 
-![Per-grade recall across all four configurations (mean ± SD, three seeds). KL1 shown in red; dashed line indicates the meta-analytic benchmark of 0.64 [@zhao2024]. CORAL loss consistently improves KL1 recall at the cost of modest reduction in KL0 recall.](report_figures/02_per_grade_recall.png){#fig-per-grade fig-alt="Per-grade recall bar chart" width="100%"}
+![Per-grade recall across all four configurations (mean ± SD, three seeds). KL1 shown in red; dashed line indicates the meta-analytic benchmark of 0.64 [@zhao2024]. CORAL loss consistently improves KL1 recall at the cost of modest reduction in KL0 recall.](report_figures/per_grade_recall.png){#fig-per-grade fig-alt="Per-grade recall bar chart" width="100%"}
 
 ### 3.4 Model Stability
 
@@ -217,7 +217,7 @@ Grad-CAM heatmaps were generated for 125 cases misclassified by all four configu
 
 Across all 20 audit cases, two predominant error patterns were identified: over-grading to KL2 in 8 cases, where models attended to minor osteophyte margins at the tibial plateau, and under-grading to KL0 in 12 cases, where activation was dispersed or peripherally displaced, failing to attend to subtle joint space narrowing. This pattern is consistent with the radiographic heterogeneity inherent to KL1.
 
-![Quantitative Grad-CAM localisation scores for shared KL1 misclassification cases (n=20 audited) across all four configurations (mean ± SD). Higher scores indicate greater proportion of activation within the central 50% crop. ResNet50+CE showed significantly higher central activation, though qualitative review indicated diffuse rather than clinically targeted attention.](report_figures/07_localisation_scores.png){#fig-localisation fig-alt="Grad-CAM localisation scores by configuration" width="100%"}
+![Quantitative Grad-CAM localisation scores for shared KL1 misclassification cases (n=20 audited) across all four configurations (mean ± SD). Higher scores indicate greater proportion of activation within the central 50% crop. ResNet50+CE showed significantly higher central activation, though qualitative review indicated diffuse rather than clinically targeted attention.](report_figures/localisation_scores.png){#fig-localisation fig-alt="Grad-CAM localisation scores by configuration" width="100%"}
 
 ## 4. Discussion
 
