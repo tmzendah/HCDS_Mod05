@@ -127,29 +127,39 @@ data/
 
 ### 4. Run experiments
 
-Each configuration has a dedicated script. To run all 12 experiments:
+Submit all 12 jobs to CSD3 in parallel:
 
 ```bash
-bash scripts/run_all_experiments.sh
+bash slurm/submit_all.sh
 ```
 
-Or run individual configurations:
+Or submit individual runs:
 
 ```bash
-bash scripts/run_resnet50_ce.sh
-bash scripts/run_resnet50_coral.sh
-bash scripts/run_efficientnet_ce.sh
-bash scripts/run_efficientnet_coral.sh
+bash slurm/train_resnet50_ce_seed42.sh
+bash slurm/train_resnet50_coral_seed42.sh
+bash slurm/train_efficientnet_ce_seed42.sh
+bash slurm/train_efficientnet_coral_seed42.sh
 ```
 
 > **Note:** Training was conducted on CSD3 HPC using SLURM. Scripts are configured for NVIDIA A100-SXM4-80GB GPU. Adjust partition and resource flags in each script for your environment.
 
 ### 5. Evaluate and generate figures
 
-Results are written to `results/`. To reproduce figures used in the report, run:
+Results are written to `results/`. To evaluate all checkpoints:
 
 ```bash
-jupyter notebook notebooks/03_results_figures.ipynb
+python src/evaluate.py \
+    --data_dir /rds/user/tm922/hpc-work/data/knee_oa \
+    --results_dir results
+```
+
+To reproduce report figures:
+
+```bash
+python notebooks/results_analysis.py \
+    --results_dir results \
+    --output_dir results
 ```
 
 ### 6. Render the report

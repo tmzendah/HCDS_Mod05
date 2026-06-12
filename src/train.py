@@ -14,8 +14,8 @@ Training configuration:
 -----------------------
     Optimiser       : Adam, lr=0.0001, weight_decay=1e-4
     Scheduler       : ReduceLROnPlateau, factor=0.1, patience=3
-    Early stopping  : patience=7 (monitors validation loss)
-    Max epochs      : 30
+    Early stopping  : patience=10 (monitors validation loss)
+    Max epochs      : 50
     Batch size      : 32
 
 Overfitting controls:
@@ -459,11 +459,11 @@ def parse_args():
                    help="Where to save checkpoints and metrics")
 
     # Optional with defaults
-    p.add_argument("--epochs",       type=int,   default=30)
+    p.add_argument("--epochs",       type=int,   default=50)
     p.add_argument("--batch_size",   type=int,   default=32)
     p.add_argument("--lr",           type=float, default=1e-4)
     p.add_argument("--weight_decay", type=float, default=1e-4)
-    p.add_argument("--es_patience",  type=int,   default=7,
+    p.add_argument("--es_patience",  type=int,   default=10,
                    help="Early stopping patience (epochs)")
     p.add_argument("--lr_patience",  type=int,   default=3,
                    help="ReduceLROnPlateau patience (epochs)")
