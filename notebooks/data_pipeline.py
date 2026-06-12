@@ -293,5 +293,4 @@ Settings confirmed:
   Imbalance:     Weighted sampler + weighted loss function
   CLAHE:         Not applied (baseline — add later if needed)
 
-Next step: Phase 3 — Model training script
 """)
