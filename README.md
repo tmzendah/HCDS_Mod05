@@ -107,9 +107,14 @@ Training was performed on the Cambridge Service for Data-Driven Discovery (CSD3)
 | pandas | 3.0.2 |
 | scikit-learn | 1.8.0 |
 | matplotlib | 3.10.8 |
+| seaborn | 0.13.2 |
+| scipy | 1.17.1 |
 | Pillow | 12.1.1 |
 | opencv-python | 4.13.0.92 |
 | grad-cam | 1.5.5 |
+| tqdm | 4.67.3 |
+| PyYAML | 6.0.3 |
+| kaggle | 2.0.1 |
 
 Full specification in `environment.yml`.
 

@@ -13,7 +13,12 @@ dependencies:
   - matplotlib=3.10.8
   - pandas=3.0.2
   - pillow=12.1.1
+  - scipy=1.17.1
+  - seaborn=0.13.2
+  - tqdm=4.67.3
+  - pyyaml=6.0.3
   - pip:
     - opencv-python==4.13.0.92
     - grad-cam==1.5.5
+    - kaggle==2.0.1
     - quarto
