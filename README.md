@@ -40,19 +40,6 @@ A 2×2 factorial design compared CE and CORAL loss across two CNN architectures 
 | KL3 | Moderate | 757 (13.1%) | 106 (12.8%) | 223 (13.5%) |
 | KL4 | Severe | 173 (3.0%) | 27 (3.3%) | 51 (3.1%) |
 
-**Access instructions:**
-
-```bash
-# Install Kaggle CLI
-pip install kaggle
-
-# Download dataset (requires Kaggle API token in ~/.kaggle/kaggle.json)
-kaggle datasets download -d shashwatwork/knee-osteoarthritis-dataset-with-severity
-unzip knee-osteoarthritis-dataset-with-severity.zip -d data/
-```
-
-The unzipped folder should contain `train/`, `val/`, and `test/` subfolders, each with grade subdirectories `0/` through `4/`.
-
 > **Note:** The dataset contains no patient-level metadata (age, sex, weight-bearing status, body mass index). This precludes subgroup-level fairness analysis and is a recognised limitation for clinical deployment.
 
 ---
@@ -92,94 +79,9 @@ Both architectures were initialised with ImageNet pretrained weights. Differenti
 
 ---
 
-## How to reproduce
+## Reproducing this work
 
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/tmzendah/HCDS_Mod05.git
-cd HCDS_Mod05
-```
-
-### 2. Set up the environment
-
-```bash
-conda env create -f environment.yml
-conda activate knee_oa
-```
-
-Or with pip:
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Download the dataset
-
-Follow the access instructions in the Dataset section above. Place the data so the structure is:
-
-```
-data/
-├── train/0/  train/1/  train/2/  train/3/  train/4/
-├── val/0/    val/1/    val/2/    val/3/    val/4/
-└── test/0/   test/1/   test/2/   test/3/   test/4/
-```
-
-### 4. Run experiments
-
-Submit all 12 jobs to CSD3 in parallel:
-
-```bash
-bash slurm/submit_all.sh
-```
-
-Or submit individual runs:
-
-```bash
-bash slurm/train_resnet50_ce_seed42.sh
-bash slurm/train_resnet50_coral_seed42.sh
-bash slurm/train_efficientnet_ce_seed42.sh
-bash slurm/train_efficientnet_coral_seed42.sh
-```
-
-> **Note:** Training was conducted on CSD3 HPC using SLURM. Scripts are configured for NVIDIA A100-SXM4-80GB GPU. Adjust partition and resource flags in each script for your environment.
-
-### 5. Evaluate and generate figures
-
-Results are written to `results/`. To evaluate all checkpoints:
-
-```bash
-python src/evaluate.py \
-    --data_dir /rds/user/tm922/hpc-work/data/knee_oa \
-    --results_dir results
-```
-
-To reproduce report figures:
-
-```bash
-python notebooks/results_analysis.py \
-    --results_dir results \
-    --output_dir results
-```
-
-### 6. Render the report
-
-```bash
-cd reports/
-quarto render report.qmd
-```
-
----
-
-## Expected outputs
-
-| Output | Location | Description |
-|---|---|---|
-| `metrics_summary.csv` | `results/` | Per-grade precision, recall, F1, AUC for each configuration |
-| `per_seed_results.csv` | `results/` | QWK and KL1 recall per seed per configuration |
-| Confusion matrices | `results/confusion_matrices/` | Per-configuration confusion matrices |
-| Grad-CAM images | `results/gradcam_examples/` | Heatmaps for shared KL1 misclassification cases |
-| Report (Word/HTML) | `reports/` | Rendered from `report.qmd` via `quarto render` |
+Full step-by-step instructions — environment setup, dataset download, training, evaluation, figures, and expected outputs — are in [`docs/reproducibility.md`](docs/reproducibility.md).
 
 ---
 

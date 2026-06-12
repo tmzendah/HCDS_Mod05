@@ -27,6 +27,9 @@ Tested on: Python 3.11.15, PyTorch 2.7.1, CUDA 11.8, Linux x86_64.
 
 ## 2. Dataset download
 
+**Kaggle Knee Osteoarthritis Dataset with Severity Grading** — CC BY 4.0
+8,260 anteroposterior knee radiographs, KL grades 0–4, pre-split into `train/`, `val/`, `test/`.
+
 ```bash
 pip install kaggle
 # Place kaggle.json in ~/.kaggle/kaggle.json
@@ -34,7 +37,14 @@ kaggle datasets download -d shashwatwork/knee-osteoarthritis-dataset-with-severi
 unzip knee-osteoarthritis-dataset-with-severity.zip -d data/
 ```
 
-Update `data_dir` in each YAML config under `configs/` to point to your `data/` path.
+Expected structure after unzip:
+
+```
+data/
+├── train/0/  train/1/  train/2/  train/3/  train/4/
+├── val/0/    val/1/    val/2/    val/3/    val/4/
+└── test/0/   test/1/   test/2/   test/3/   test/4/
+```
 
 ---
 
@@ -127,3 +137,18 @@ Seeds 42, 123, and 456 are passed via `--seed` and applied to Python, NumPy, PyT
 | EfficientNet-B0 + CORAL | 0.809 ± 0.009 | 0.354 ± 0.011 |
 
 Full per-seed results are in `results/metrics/summary.csv`.
+
+---
+
+## 10. Expected outputs
+
+| Output | Location | Description |
+|---|---|---|
+| Per-run eval JSON | `results/metrics/{run_name}_eval.json` | Full metrics per checkpoint |
+| Summary CSV | `results/metrics/summary.csv` | All 12 runs, one row each |
+| Checkpoints | `results/checkpoints/{run_name}.pth` | Best model per run |
+| Training history | `results/metrics/{run_name}_history.json` | Loss and accuracy per epoch |
+| Grad-CAM figures | `results/gradcam/shared_misclassified/` | Side-by-side comparison figures |
+| Audit scores | `results/gradcam/audit_scores.json` | Quantitative localisation scores |
+| Report figures | `results/` | 7 PNG figures used in report.qmd |
+| Report (Word/HTML) | `reports/` | Rendered via `quarto render report.qmd` |
