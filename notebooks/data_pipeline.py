@@ -11,7 +11,6 @@ Purpose:
 This script does not train the model — it builds and verifies
 the data pipeline that the training script will use.
 
-Author: tm922
 Date: April 2026
 """
 
@@ -25,7 +24,7 @@ import matplotlib.pyplot as plt
 
 
 # ── Step 2: Paths and settings ────────────────────────────────────────────────
-data_dir = "/rds/user/tm922/hpc-work/data/knee_oa"
+data_dir = "/path/to/your/data/knee_oa"
 
 # Paths for each split
 train_dir = os.path.join(data_dir, "train")
@@ -265,7 +264,7 @@ for i, ax in enumerate(axes.flat):
         ax.axis("off")
 
 plt.tight_layout()
-output_path = "/rds/user/tm922/hpc-work/outputs/phase2_augmented_batch.png"
+output_path = "/path/to/your/outputs/phase2_augmented_batch.png"
 plt.savefig(output_path, dpi=150, bbox_inches="tight")
 print(f"  Saved to: {output_path}")
 print()
@@ -273,7 +272,7 @@ print()
 
 # ── Step 10: Save pipeline components for use in training ─────────────────────
 # Save the loss weights so the training script can load them
-weights_path = "/rds/user/tm922/hpc-work/outputs/loss_weights.pt"
+weights_path = "/path/to/your/outputs/loss_weights.pt"
 torch.save(loss_weights, weights_path)
 print(f"Loss weights saved to: {weights_path}")
 print()

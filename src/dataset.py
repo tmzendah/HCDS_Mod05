@@ -34,7 +34,7 @@ Usage
     from src.dataset import get_dataloaders
 
     train_loader, val_loader, test_loader = get_dataloaders(
-        data_dir = "/rds/user/tm922/hpc-work/data/knee_oa",
+        data_dir = "/path/to/your/data/knee_oa",
         batch_size = 32,
         seed = 42,
     )

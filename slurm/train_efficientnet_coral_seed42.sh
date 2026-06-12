@@ -9,7 +9,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=04:00:00
-#SBATCH --account=COMPUTERLAB-SL2-GPU
+#SBATCH --account=YOUR-SLURM-ACCOUNT
 
 # Activate environment
 source ~/.bashrc
@@ -23,6 +23,6 @@ python src/train.py \
     --arch       efficientnet \
     --loss       coral \
     --seed       42 \
-    --data_dir   /rds/user/tm922/hpc-work/data/knee_oa \
+    --data_dir   /rds/user/$USER/hpc-work/data/knee_oa \
     --output_dir results \
     --epochs     30

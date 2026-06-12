@@ -76,7 +76,7 @@ python src/train.py \
     --arch resnet50 \
     --loss ce \
     --seed 42 \
-    --data_dir /rds/user/tm922/hpc-work/data/knee_oa \
+    --data_dir /path/to/your/data/knee_oa \
     --output_dir results
 ```
 
@@ -86,7 +86,7 @@ python src/train.py \
 
 ```bash
 python src/evaluate.py \
-    --data_dir /rds/user/tm922/hpc-work/data/knee_oa \
+    --data_dir /path/to/your/data/knee_oa \
     --results_dir results
 ```
 
@@ -98,7 +98,7 @@ Outputs per-seed metrics to `results/metrics/`. The aggregated summary across se
 
 ```bash
 python src/gradcam_audit.py \
-    --data_dir /rds/user/tm922/hpc-work/data/knee_oa \
+    --data_dir /path/to/your/data/knee_oa \
     --results_dir results \
     --output_dir results/gradcam
 ```

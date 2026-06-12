@@ -52,7 +52,7 @@ Outputs:
 Usage
 -----
     python src/gradcam_audit.py \
-        --data_dir   /rds/user/tm922/hpc-work/data/knee_oa \
+        --data_dir   /path/to/your/data/knee_oa \
         --results_dir results \
         --output_dir  results/gradcam
 """

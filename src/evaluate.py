@@ -31,12 +31,12 @@ Usage
 -----
     # Evaluate all checkpoints
     python src/evaluate.py \
-        --data_dir /rds/user/tm922/hpc-work/data/knee_oa \
+        --data_dir /path/to/your/data/knee_oa \
         --results_dir results
 
     # Evaluate one specific checkpoint
     python src/evaluate.py \
-        --data_dir /rds/user/tm922/hpc-work/data/knee_oa \
+        --data_dir /path/to/your/data/knee_oa \
         --results_dir results \
         --checkpoint results/checkpoints/resnet50_ce_seed42.pth
 """

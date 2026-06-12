@@ -14,8 +14,8 @@ Generates all figures and tables needed for the report:
 Usage
 -----
     python notebooks/notebooks/results_analysis.py \
-        --results_dir /home/tm922/knee-oa-kl-grading/results \
-        --output_dir  /home/tm922/knee-oa-kl-grading/results/figures
+        --results_dir /path/to/your/results \
+        --output_dir  /path/to/your/results/figures
 """
 
 import argparse

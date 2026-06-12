@@ -18,7 +18,7 @@ Mean pixel intensity is used as a proxy:
 Usage
 -----
     python scripts/notebooks/eda.py \
-        --data_dir /rds/user/tm922/hpc-work/data/knee_oa \
+        --data_dir /path/to/your/data/knee_oa \
         --output_dir results/eda \
         --n_exposure_sample 50
 """

@@ -8,13 +8,13 @@
 #   bash scripts/slurm/submit_all.sh
 #
 # Monitor jobs:
-#   squeue -u tm922
+#   squeue -u $USER
 #
 # Check logs:
 #   tail -f logs/train_resnet50_ce_seed42_*.log
 #
 # Cancel all your jobs if needed:
-#   scancel -u tm922
+#   scancel -u $USER
 # ─────────────────────────────────────────────────────────
 
 set -e
@@ -43,6 +43,6 @@ done
 echo ""
 echo "  Total submitted: $SUBMITTED / 12"
 echo ""
-echo "  Monitor with:  squeue -u tm922"
-echo "  Cancel all:    scancel -u tm922"
+echo "  Monitor with:  squeue -u $USER"
+echo "  Cancel all:    scancel -u $USER"
 echo "========================================"

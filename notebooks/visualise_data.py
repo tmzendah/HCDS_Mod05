@@ -8,7 +8,6 @@ Purpose:
 - Check image quality across grades
 - Understand what the model will be learning from
 
-Author: tm922
 Date: April 2026
 """
 
@@ -21,7 +20,7 @@ from PIL import Image              # opens image files from disk
 
 
 # ── Step 2: Define where our data lives ──────────────────────────────────────
-data_dir = "/rds/user/tm922/hpc-work/data/knee_oa"
+data_dir = "/path/to/your/data/knee_oa"
 
 # Which split to inspect — change to "val" or "test" to check those too
 split = "train"
@@ -115,8 +114,8 @@ for row_idx, grade in enumerate(grades):
 
 plt.tight_layout()
 
-output_path = "/rds/user/tm922/hpc-work/outputs/phase1_visual_check.png"
-os.makedirs("/rds/user/tm922/hpc-work/outputs", exist_ok=True)
+output_path = "/path/to/your/outputs/phase1_visual_check.png"
+os.makedirs("/path/to/your/outputs", exist_ok=True)
 plt.savefig(output_path, dpi=150, bbox_inches="tight")
 print(f"Visualisation saved to: {output_path}")
 print()

@@ -45,7 +45,7 @@ Usage
         --arch resnet50 \
         --loss ce \
         --seed 42 \
-        --data_dir /rds/user/tm922/hpc-work/data/knee_oa \
+        --data_dir /path/to/your/data/knee_oa \
         --output_dir results \
         --epochs 30
 
@@ -54,7 +54,7 @@ Smoke test (CPU, 2 epochs, small data):
         --arch resnet50 \
         --loss ce \
         --seed 42 \
-        --data_dir /rds/user/tm922/hpc-work/data/knee_oa \
+        --data_dir /path/to/your/data/knee_oa \
         --output_dir results \
         --epochs 2 \
         --smoke_test
