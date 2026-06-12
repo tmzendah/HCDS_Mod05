@@ -1,20 +1,13 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────
 # submit_all.sh
-# Submits all 12 training jobs to the CSD3 GPU queue.
+# Submits all 12 training jobs to a SLURM GPU queue.
 #
 # Usage:
-#   cd ~/knee-oa-kl-grading
-#   bash scripts/slurm/submit_all.sh
-#
-# Monitor jobs:
-#   squeue -u $USER
+#   bash slurm/submit_all.sh
 #
 # Check logs:
 #   tail -f logs/train_resnet50_ce_seed42_*.log
-#
-# Cancel all your jobs if needed:
-#   scancel -u $USER
 # ─────────────────────────────────────────────────────────
 
 set -e
@@ -42,7 +35,4 @@ done
 
 echo ""
 echo "  Total submitted: $SUBMITTED / 12"
-echo ""
-echo "  Monitor with:  squeue -u $USER"
-echo "  Cancel all:    scancel -u $USER"
 echo "========================================"
