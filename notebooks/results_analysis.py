@@ -1,5 +1,5 @@
 """
-02_results_analysis.py
+notebooks/results_analysis.py
 Results analysis and figure generation for the 2x2 KL grading experiment.
 
 Generates all figures and tables needed for the report:
@@ -13,7 +13,7 @@ Generates all figures and tables needed for the report:
 
 Usage
 -----
-    python notebooks/02_results_analysis.py \
+    python notebooks/notebooks/results_analysis.py \
         --results_dir /home/tm922/knee-oa-kl-grading/results \
         --output_dir  /home/tm922/knee-oa-kl-grading/results/figures
 """
@@ -650,7 +650,7 @@ def main():
     out_dir     = Path(args.output_dir)
 
     print("=" * 60)
-    print("  02_results_analysis.py")
+    print("  notebooks/results_analysis.py")
     print("=" * 60)
     print(f"  Results dir : {results_dir}")
     print(f"  Output dir  : {out_dir}")

@@ -1,5 +1,5 @@
 """
-Phase 1 — Visual Data Exploration
+notebooks/visualise_data.py
 Knee Osteoarthritis Dataset with KL Severity Grading
 
 Purpose:

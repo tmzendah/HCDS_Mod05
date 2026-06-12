@@ -1,5 +1,5 @@
 """
-Phase 2 — Data Pipeline
+notebooks/data_pipeline.py
 Knee Osteoarthritis Dataset with KL Severity Grading
 
 Purpose:
