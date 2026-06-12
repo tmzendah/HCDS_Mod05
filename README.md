@@ -53,6 +53,8 @@ unzip knee-osteoarthritis-dataset-with-severity.zip -d data/
 
 The unzipped folder should contain `train/`, `val/`, and `test/` subfolders, each with grade subdirectories `0/` through `4/`.
 
+> **Note:** The dataset contains no patient-level metadata (age, sex, weight-bearing status, body mass index). This precludes subgroup-level fairness analysis and is a recognised limitation for clinical deployment.
+
 ---
 
 ## Experimental design
