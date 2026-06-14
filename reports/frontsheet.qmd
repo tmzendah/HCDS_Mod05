@@ -1,0 +1,83 @@
+---
+format:
+  docx:
+    output-file: HDS_ML_MZENDAH_1806_frontsheet.docx
+    toc: false
+    number-sections: false
+    fig-dpi: 300
+execute:
+  echo: false
+  warning: false
+---
+
+# Cover Page {.unnumbered .unlisted}
+
+::: {style="text-align: center; margin-top: 3em; margin-bottom: 2em;"}
+![](cambridge_logo.png){width="40%" fig-align="center"}
+
+<br><br>
+
+### MSt Healthcare Data Science {.unnumbered .unlisted}
+:::
+
+#### Authentication of practice {.unnumbered .unlisted}
+
+|   |   |
+|---|---|
+|I confirm that I have fully read and understood the assignment brief for this module.| **Y** |
+
+#### Details {.unnumbered .unlisted}
+
+|   |   |
+|---|---|
+|Name: Talita|Surname: Mzendah|
+|Submission Date| 18 -- 06 -- 26 |
+|Word Count: whole assignment including codes| 3,220 |
+|Word Count: main body excluding abstract, references and supplementary materials| 2,924 |
+
+#### Permission to share your assignment {.unnumbered .unlisted}
+
+I do give permission to share my assignment with future MSt participants.
+
+#### University statement of originality {.unnumbered .unlisted}
+
+This assignment is the result of my own work and includes nothing which is the outcome of work done in collaboration except as declared in the Preface and specified in the text. It is not substantially the same as any that I have previously submitted for a degree or diploma or other qualification at the University of Cambridge or any other university or similar institution, or that is being concurrently submitted, except as declared in the Preface and specific in the text. I further state that no substantial part of my Portfolio has already been submitted, nor is being concurrently submitted for any such degree, diploma or other qualification at the University of Cambridge or any other university or similar institution except as declared in the Preface and specified in the text.
+
+|   |   |
+|---|---|
+|I confirm the statement of originality as above| **Y** |
+
+#### Questions for reflection {.unnumbered .unlisted}
+
+Self-assessment is an important aspect of feedback literacy, which is, in turn, key to the development of expertise. As you proceed through the MSt Healthcare data science programme, we hope that you will make use of the following prompts to assess your own work on assignments. Specific assignment briefs will likely indicate which of these to address for which assessments, but, in general, we expect you to respond to one or two for each assignment on your course.
+
+For each of the questions, do not spend too long answering -- keep it brief. For each question you answer, limit yourself to no more than three items. And please remember, this is optional and developmental: these cover sheets are designed to create space for self-assessment and feedback dialogue, rather than additional assignment workload.
+
+1. Which aspects of this assignment are you most uncertain about and/or would most like to receive feedback on?
+
+The overall methodological approach, I would like to receive feedback to understand if I have correctly identified the gap and applied knowledge appropriately.
+
+2. What elements are you left pondering after this assignment that you would like to discuss further?
+
+N/A
+
+3. How have you incorporated feedback from peers and tutors into this assignment?
+
+Peers recommended keeping the methodology focused rather than overextending it. I took this on board and limited the architectural comparison to two CNN models (ResNet50 and EfficientNet-B0), each evaluated against two training objectives (CE and CORAL), which allowed me to analyse the interaction in sufficient depth rather than producing a superficial comparison across many models.
+
+4. How, and to what extent, have you been able to incorporate feedback on previous course work into this assignment?
+
+Following feedback on previous coursework, I focused on completeness and reproducibility, ensuring that my work can be replicated on any machine.
+
+5. Using the wording in the rubric, how would you describe the quality of the different aspects of your work?
+
+I have aimed to address all elements of the rubric systematically. I deliberately structured each section to build depth progressively from dataset and methodology through to results, discussion, and ethical considerations, so that no rubric criterion was left unaddressed.
+
+#### Declaration of the use of generative AI {.unnumbered .unlisted}
+
+|   |   |
+|---|---|
+| Which permitted use of generative AI are you acknowledging? | Code generation, informed feedback |
+| Which generative AI tool did you use (name and version)? | Claude Code Sonnet 4.6 |
+| What did you use the tool for? | Code generation, informed feedback, reference curation |
+| How have you used or changed the generative AI's output? | I used generative AI to support code drafting, troubleshooting, reference organisation, and formative feedback on structure and clarity. All experimental decisions, model runs, results, interpretation, and final wording were reviewed, verified, and edited by me. |

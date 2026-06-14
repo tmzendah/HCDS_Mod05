@@ -5,6 +5,7 @@ bibliography: references.bib
 csl: vancouver.csl
 format:
   docx:
+    output-file: HDS_ML_MZENDAH_1806_report.docx
     toc: true
     number-sections: true
     fig-dpi: 300
@@ -21,109 +22,34 @@ execute:
   warning: false
 ---
 
-# Cover Page {.unnumbered .unlisted}
 
-::: {style="text-align: center; margin-top: 3em; margin-bottom: 2em;"}
-![](cambridge_logo.png){width="40%" fig-align="center"}
-
-<br><br>
-
-### MSt Healthcare Data Science {.unnumbered .unlisted}
-:::
-
-#### Authentication of practice {.unnumbered .unlisted}
-
-|   |   |
-|---|---|
-|I confirm that I have fully read and understood the assignment brief for this module.| **Y** |
-
-#### Details {.unnumbered .unlisted}
-
-|   |   |
-|---|---|
-|Name: Talita|Surname: Mzendah|
-|Submission Date| 18 -- 06 -- 26 |
-|Word Count: whole assignment including codes| |
-|Word Count: main body excluding abstract, references and supplementary materials| |
-
-#### Permission to share your assignment {.unnumbered .unlisted}
-
-I do give permission to share my assignment with future MSt participants.
-
-#### University statement of originality {.unnumbered .unlisted}
-
-This assignment is the result of my own work and includes nothing which is the outcome of work done in collaboration except as declared in the Preface and specified in the text. It is not substantially the same as any that I have previously submitted for a degree or diploma or other qualification at the University of Cambridge or any other university or similar institution, or that is being concurrently submitted, except as declared in the Preface and specific in the text. I further state that no substantial part of my Portfolio has already been submitted, nor is being concurrently submitted for any such degree, diploma or other qualification at the University of Cambridge or any other university or similar institution except as declared in the Preface and specified in the text.
-
-|   |   |
-|---|---|
-|I confirm the statement of originality as above| **Y** |
-
-#### Questions for reflection {.unnumbered .unlisted}
-
-Self-assessment is an important aspect of feedback literacy, which is, in turn, key to the development of expertise. As you proceed through the MSt Healthcare data science programme, we hope that you will make use of the following prompts to assess your own work on assignments. Specific assignment briefs will likely indicate which of these to address for which assessments, but, in general, we expect you to respond to one or two for each assignment on your course.
-
-For each of the questions, do not spend too long answering -- keep it brief. For each question you answer, limit yourself to no more than three items. And please remember, this is optional and developmental: these cover sheets are designed to create space for self-assessment and feedback dialogue, rather than additional assignment workload.
-
-1. Which aspects of this assignment are you most uncertain about and/or would most like to receive feedback on?
-
-The overall methodological approach, I would like to receive feedback to understand if I have correctly identify the gap and apply knowledge approprietly.
-
-2. What elements are you left pondering after this assignment that you would like to discuss further?
-
-N/A
-
-3. How have you incorporated feedback from peers and tutors into this assignment?
-
-Peers recommended keeping the methodology focused rather than overextending it. I took this on board and limited the architectural comparison to two CNN models (ResNet50 and EfficientNet-B0), each evaluated against two training objectives (CE and CORAL), which allowed me to analyse the interaction in sufficient depth rather than producing a superficial comparison across many models.
-
-4. How, and to what extent, have you been able to incorporate feedback on previous course work into this assignment?
-
-Following feedback on previous coursework, I focused on completeness and reproducibility, ensuring that my work can be replicated on any machine.
-
-5. Using the wording in the rubric, how would you describe the quality of the different aspects of your work?
-
-I would describe this as an excellent attempt to address all elements of the rubric. I deliberately structured each section to build depth progressively from dataset and methodology through to results, discussion, and ethical considerations so, that no rubric criterion was left unaddressed, even at the cost of a higher word count.
-
-#### Declaration of the use of generative AI {.unnumbered .unlisted}
-
-|   |   |
-|---|---|
-| Which permitted use of generative AI are you acknowledging? | Code generation, informed feedback |
-| Which generative AI tool did you use (name and version)? | Claude Code Sonnet 4.6 |
-| What did you use the tool for? | Code generation, informed feedback, reference curation |
-| How have you used or changed the generative AI's output? | |
-
-{{< pagebreak >}}
-
-## Abstract
+# Abstract {.unnumbered}
 
 Knee osteoarthritis (OA) is a leading cause of musculoskeletal disability globally, with radiographic severity graded using the Kellgren-Lawrence (KL) scale. Automated grading using convolutional neural networks (CNNs) has shown promise, yet KL Grade 1 — doubtful OA — remains poorly detected across architectures, with a meta-analytic sensitivity of only 0.64. A largely overlooked contributor to this failure is loss function choice: standard categorical cross-entropy (CE) treats KL grades as unordered categories, ignoring the ordinal structure of the scale and providing no incentive to attend to clinically critical grade boundaries.
 
 This study investigated whether loss function choice affects early OA detection by comparing two training objectives (CE and CORAL ordinal loss) across two CNN architectures (ResNet50 and EfficientNet-B0) on the Kaggle Knee Osteoarthritis Dataset (n=8,260 anteroposterior radiographs, KL grades 0–4). A 2×2 factorial design was employed across three random seeds, yielding 12 training runs. Primary outcomes were KL1 recall and Quadratic Weighted Kappa (QWK). Grad-CAM explainability analysis was performed on shared misclassification cases, with heatmaps reviewed by a qualified MSK radiographer.
 
-CORAL loss consistently improved KL1 recall across both architectures: ResNet50+CORAL achieved 0.341 ± 0.019 versus 0.127 ± 0.012 for ResNet50+CE (paired t=10.534, p=0.004), and EfficientNet+CORAL achieved 0.354 ± 0.009 versus 0.190 ± 0.017 for EfficientNet+CE (paired t=27.368, p=0.001). EfficientNet-B0+CORAL achieved the highest mean QWK of 0.809 ± 0.008, exceeding the 0.81 clinical benchmark. Despite these improvements, all configurations remained below the meta-analytic KL1 benchmark, attributable to acquisition metadata absence, age-related label noise, and intrinsic KL1 radiographic heterogeneity.
+CORAL loss consistently improved KL1 recall across both architectures: ResNet50+CORAL achieved 0.341 ± 0.023 versus 0.127 ± 0.013 for ResNet50+CE, and EfficientNet+CORAL achieved 0.354 ± 0.011 versus 0.190 ± 0.021 for EfficientNet+CE. EfficientNet-B0+CORAL achieved the highest mean QWK of 0.809 ± 0.009, approaching the 0.81 "almost perfect agreement" threshold [@landis1977]. Despite these improvements, all configurations remained below the meta-analytic KL1 benchmark, attributable to acquisition metadata absence, age-related label noise, and intrinsic KL1 radiographic heterogeneity.
 
 These findings demonstrate that ordinal loss functions are preferable to CE for KL grading tasks, but that dataset limitations — particularly the absence of clinical context such as weight-bearing status and patient demographics — represent a fundamental barrier to reliable early OA detection that loss function optimisation alone cannot overcome.
 
-## 1. Introduction
+# Introduction
 
-Osteoarthritis (OA) is the most prevalent musculoskeletal (MSK) condition globally, with knee OA affecting an estimated 365 million people worldwide and representing a leading cause of pain and functional disability [@zhao2024]. Radiographic grading of knee OA severity is central to clinical decision-making, guiding referral pathways, monitoring disease progression, and determining eligibility for intervention. The Kellgren-Lawrence (KL) scale remains the international standard for radiographic OA grading, classifying severity from KL0 (normal) to KL4 (severe) based on the presence and extent of osteophytes, joint space narrowing, subchondral sclerosis, and bony deformity [@kellgren1957].
+Osteoarthritis (OA) is the most prevalent musculoskeletal (MSK) condition globally, with knee OA affecting an estimated 365 million people worldwide and representing a leading cause of pain and functional disability [@yang2023knee]. Radiographic grading of knee OA severity is central to clinical decision-making, guiding referral pathways, monitoring disease progression, and determining eligibility for intervention. The Kellgren-Lawrence (KL) scale remains the international standard for radiographic OA grading, classifying severity from KL0 (normal) to KL4 (severe) based on the presence and extent of osteophytes, joint space narrowing, subchondral sclerosis, and bony deformity [@kellgren1957].
 
-Among the five grades, KL1 — doubtful OA — carries disproportionate clinical significance. Missing KL1 may delay risk-factor modification, monitoring, or clinical follow-up in symptomatic or high-risk patients. Without timely identification, the opportunity for risk-modifying and symptom-management strategies — weight management, physiotherapy, and activity modification — is lost, and the patient may only re-present once structural damage has progressed to an irreversible stage. Early detection of KL1 is therefore not a diagnostic nicety but a clinically consequential decision with direct implications for long-term patient outcomes.
+Among the five grades, KL1 — doubtful OA — carries disproportionate clinical significance. Missing KL1 may delay risk-factor modification, monitoring, or clinical follow-up in symptomatic or high-risk patients. Without timely identification, the window for risk-modifying and symptom-management strategies — weight management, physiotherapy, and activity modification — may narrow. Early detection of KL1 is therefore not a diagnostic nicety but a clinically consequential decision with direct implications for long-term patient outcomes.
 
-Despite this, KL1 remains the most difficult grade to identify reliably, both for human reporters and automated systems. The radiographic changes at KL1 are subtle — small osteophytes at the joint margins that are not always clearly visible, and equivocal joint space narrowing that falls below the threshold of confident diagnosis. Inter-rater variability at KL1 is well documented, with experienced radiologists frequently disagreeing on the same film [@tiulpin2018]. This ambiguity is compounded by the absence of clinical context in standard radiographic reporting: weight-bearing status, age, body mass index, knee circumference, sex, and ethnicity all influence the radiographic appearance of early OA but are rarely available to an automated grading system operating on images alone.
+Despite this, KL1 remains the most difficult grade to identify reliably, both for human reporters and automated systems. The radiographic changes at KL1 are subtle — small osteophytes at the joint margins that are not always clearly visible, and equivocal joint space narrowing that falls below the threshold of confident diagnosis. Inter-rater variability at KL1 is well documented, with experienced radiologists frequently disagreeing on the same film [@tiulpin2018; @zhao2025dl]. This ambiguity is compounded by the absence of clinical context in standard radiographic reporting: weight-bearing status, age, body mass index, knee circumference, sex, and ethnicity all influence the radiographic appearance of early OA but are rarely available to an automated grading system operating on images alone.
 
-The application of deep learning to automated KL grading has grown substantially, with CNNs demonstrating promising performance on large radiographic datasets [@tiulpin2018]. However, a meta-analysis of 19 studies reported a mean KL1 sensitivity of only 0.64, highlighting a persistent failure to detect early disease not resolved by advances in architecture alone [@zhao2024]. A largely overlooked contributor is the choice of loss function — specifically whether treating KL grades as unordered categories, as standard CE does, systematically undermines detection at clinically critical grade boundaries. This study investigates whether loss function choice affects early OA detection by comparing two training objectives (CE and CORAL ordinal loss) across two CNN architectures (ResNet50 and EfficientNet-B0) for automated KL grading, with KL1 recall designated as the primary clinical outcome.
+The application of deep learning to automated KL grading has grown substantially, with CNNs demonstrating promising performance on large radiographic datasets [@tiulpin2018]. However, a meta-analysis of 19 studies reported a mean KL1 sensitivity of only 0.64, highlighting a persistent failure to detect early disease not resolved by advances in architecture alone [@zhao2025dl]. A largely overlooked contributor is the choice of loss function — specifically whether treating KL grades as unordered categories, as standard CE does, systematically undermines detection at clinically critical grade boundaries. This study investigates whether loss function choice affects early OA detection by comparing two training objectives (CE and CORAL ordinal loss) across two CNN architectures (ResNet50 and EfficientNet-B0) for automated KL grading, with KL1 recall designated as the primary clinical outcome.
 
-## 2. Methods
+# Methods
 
-This study employed a 2×2 factorial design comparing two CNN architectures (ResNet50, EfficientNet-B0) against two training objectives (categorical cross-entropy, CORAL ordinal loss) on the Kaggle knee OA dataset, trained across three random seeds to assess stability.
+This study used a 2×2 factorial design comparing two CNN architectures, ResNet50 and EfficientNet-B0, with two training objectives, categorical cross-entropy (CE) and CORAL ordinal loss. Each configuration was trained across three random seeds to assess stability.
 
-### 2.1 Dataset
+## Dataset
 
-The Kaggle Knee Osteoarthritis Dataset with Severity Grading [@chen2018knee] was used as the sole dataset for model training and evaluation, accessed via Kaggle under a CC BY 4.0 licence. The dataset comprises 8,260 anteroposterior knee radiographs labelled with Kellgren-Lawrence grades 0–4 [@kellgren1957], already organised into predefined train, validation and test folders (n=5,778, 826 and 1,656 respectively), corresponding to approximately 70/10/20 of the analysed images. As no patient-level metadata was available, re-splitting carried a risk of data leakage if images from the same patient were distributed across partitions; the original split was therefore preserved to maintain data integrity. The images were supplied as preprocessed 224×224 single-knee radiographs; no additional resizing, cropping, or re-splitting was performed. No ethics approval was required as the dataset is publicly available and contains no personally identifiable information.
-
-The class distribution by KL grade across each split is shown in Table 1. A consistent imbalance pattern is observed across all partitions, with KL0 and KL2 the most prevalent grades and KL4 the least prevalent.
+The Kaggle Knee Osteoarthritis Dataset with Severity Grading [@chen2018knee] was used as the sole dataset for model training and evaluation. It contains 8,260 anteroposterior knee radiographs labelled with Kellgren-Lawrence grades 0–4 [@kellgren1957], organised into predefined train, validation and test folders (n=5,778, 826 and 1,656 respectively; approximately 70/10/20). These splits were retained because patient-level metadata were unavailable, making re-splitting vulnerable to leakage if images from the same patient appeared in multiple partitions. Images were supplied as preprocessed 224×224 single-knee radiographs; no additional resizing, cropping or re-splitting was performed. No ethics approval was required because the dataset is publicly available and contains no personally identifiable information. Class distribution across splits is shown in Table 1.
 
 | KL Grade | Description | Train (n=5,778) | Validation (n=826) | Test (n=1,656) |
 |---|---|---|---|---|
@@ -135,133 +61,108 @@ The class distribution by KL grade across each split is shown in Table 1. A cons
 
 : Table 1. Class distribution by KL grade across train, validation and test sets.
 
-### 2.2 Preprocessing
+## Preprocessing
 
-All images underwent a consistent preprocessing pipeline applied identically across all experimental conditions, with each step chosen to address specific characteristics of plain knee radiography.
+All images underwent the same preprocessing pipeline. CLAHE was applied (clipLimit=2.0, tileGridSize=8×8) to enhance local radiographic contrast [@abdo2022]. Grayscale images were converted to three-channel RGB for compatibility with ImageNet-pretrained models and normalised using ImageNet statistics (mean=[0.485, 0.456, 0.406]; std=[0.229, 0.224, 0.225]). Training augmentation comprised random horizontal flipping (p=0.5) — anatomically valid as a flipped left knee is radiographically equivalent to a right knee — and rotation (±10°). Validation and test images received no augmentation.
 
-Contrast Limited Adaptive Histogram Equalisation (CLAHE; clipLimit=2.0, tileGridSize=8×8) was applied to enhance local contrast at the medial joint space and osteophyte margins — the regions most diagnostically relevant to KL grading — while the clip limit prevented noise amplification in homogeneous regions [@hassan2024]. Although the Kaggle images are grayscale, all images were converted to three-channel RGB to preserve compatibility with ImageNet-pretrained architectures, and normalised using ImageNet statistics (mean=[0.485, 0.456, 0.406]; std=[0.229, 0.224, 0.225]) to stabilise gradient descent during fine-tuning.
+## Model Architectures
 
-Training images were augmented with random horizontal flipping (p=0.5) — anatomically valid as a flipped left knee is radiographically equivalent to a right knee — and rotation (±10°) to simulate realistic positioning variation. More aggressive augmentation was excluded to avoid distorting the fine structural features upon which KL grading depends.
+ResNet50 [@he2016], a 50-layer residual network with approximately 23.5 million parameters, and EfficientNet-B0 [@tan2019efficientnet], with approximately 4 million parameters, were selected to compare a commonly used residual CNN baseline with a more parameter-efficient architecture. EfficientNet architectures have shown strong performance on this specific dataset — EfficientNet-B5 reached 82% accuracy after label-noise correction [@momenpour2025] — and B0 was chosen as the smallest, most deployable family member to assess whether parameter efficiency compromises grading performance. Both architectures were initialised with ImageNet pretrained weights and fully fine-tuned. The final layer produced either five class outputs for CE or four ordinal rank-boundary outputs for CORAL, giving four configurations: ResNet50+CE, ResNet50+CORAL, EfficientNet-B0+CE and EfficientNet-B0+CORAL. Differential learning rates were used: 1×10⁻⁵ for the pretrained backbone and 1×10⁻⁴ for the classification head [@howard2018].
 
-Validation and test images received no augmentation.
+## Loss Functions
 
-### 2.3 Model Architectures
+CE treats KL grades as unordered categories and does not explicitly encode that adjacent grades are clinically closer than distant grades. CORAL [@cao2020] reformulates the five-class task as four ordered binary decisions: P(grade>0), P(grade>1), P(grade>2) and P(grade>3). At inference, the predicted grade was the number of rank probabilities exceeding 0.5. Class weighting and label correction were not applied, so that within-architecture comparisons reflected loss function choice rather than additional imbalance-handling strategies.
 
-Two CNN architectures were selected based on their established performance in the KL grading literature. ResNet50 [@he2016], a 50-layer residual network with approximately 23.5 million parameters, has been widely adopted as the benchmark architecture for automated KL grading and served as the reference point for this study [@tiulpin2018]. EfficientNet-B0 [@tan2019efficientnet], with approximately 4 million parameters, has demonstrated strong performance on this specific dataset [@momenpour2025] and was selected to examine whether a more parameter-efficient architecture yields comparable or superior results under the same experimental conditions.
+## Training Configuration
 
-Both architectures were initialised with ImageNet pretrained weights and fully fine-tuned. The final classification layer was replaced to produce five outputs for CE or four rank boundary outputs for CORAL (Section 2.4), yielding four experimental configurations: ResNet50+CE, ResNet50+CORAL, EfficientNet-B0+CE, and EfficientNet-B0+CORAL. Differential learning rates were applied to prevent catastrophic forgetting of ImageNet-learned features during fine-tuning: the pretrained backbone was updated conservatively at lr=1×10⁻⁵, while the randomly initialised classification head was trained at lr=1×10⁻⁴, allowing rapid adaptation to the target task without destabilising the pretrained representations [@howard2018].
+Hyperparameters were fixed a priori, informed by prior KL grading studies [@momenpour2025; @tiulpin2018] and standard fine-tuning practice, and held constant across all configurations so that within-architecture comparisons reflected the effect of loss function, while architecture was evaluated as a separate experimental factor. Models were trained using Adam [@kingma2015], weight decay 1×10⁻⁴, batch size 32 and a maximum of 50 epochs. ReduceLROnPlateau reduced the learning rate by a factor of 0.1 after three epochs without validation loss improvement, and early stopping with patience 10 saved the lowest-validation-loss checkpoint. Four configurations trained across three seeds (42, 123, 456) produced 12 runs. Training was performed on an NVIDIA A100-SXM4-80GB GPU via CSD3. Code, configuration files, SLURM scripts, environment specification and reproduction instructions are available at: <https://github.com/tmzendah/HCDS_Mod05>.
 
-### 2.4 Loss Functions
+## Evaluation Metrics
 
-Standard CE treats KL grades as unordered categories, assigning equal penalty regardless of grade distance and ignoring the ordinal structure of the KL scale — under CE, misclassifying KL1 as KL0 incurs the same penalty as misclassifying it as KL4, providing no incentive to respect clinically meaningful grade boundaries [@zhao2024].
+Performance was evaluated exclusively on the held-out test set (n=1,656), not used at any stage during training or model selection. QWK served as the primary field-standard metric, penalising distant grade errors proportionally to their clinical severity and enabling direct comparison with published benchmarks [@tiulpin2018; @zhao2025dl]. KL Grade 1 recall was the primary clinical outcome, measuring detection of doubtful OA — the grade with meta-analytic sensitivity of 0.64 across 19 studies [@zhao2025dl]. Additional metrics included accuracy, weighted F1, macro AUC, balanced accuracy and per-grade recall. For CORAL models, ordinal threshold probabilities were converted into class probabilities before computing one-vs-rest macro AUC, using the standard rank-to-class decomposition: P(grade=0) = 1 − P(grade>0), P(grade=k) = P(grade>k−1) − P(grade>k) for k=1–3, and P(grade=4) = P(grade>3). Metrics were reported as mean ± sample SD across three seeds. Paired t-tests compared CE and CORAL within each architecture; because n=3, statistical tests were interpreted as exploratory, with emphasis placed on consistency across seeds, effect size and clinical magnitude.
 
-CORAL (Consistent Rank Logits; @cao2020) addresses this by reformulating grading as ordinal regression, decomposing the five-class problem into four binary rank decisions — P(grade>0), P(grade>1), P(grade>2), P(grade>3) — and enforcing rank consistency through a shared classification layer. The predicted grade at inference is the count of rank boundaries where sigmoid probability exceeds 0.5. By penalising distant grade errors more heavily than adjacent ones, CORAL aligns the loss surface with the ordinal structure of the KL scale, hypothesised to improve detection at grade boundaries including KL1. Both loss functions were applied without class weighting or label correction to isolate the training objective as the sole experimental variable.
+## Fairness and Explainability
 
-### 2.5 Training Configuration
+The Kaggle dataset contains no demographic or acquisition metadata, preventing subgroup fairness analysis. This limits conclusions about clinical generalisability and is addressed as a priority for future work [@seyyedkalantari2021; @obermeyer2019]. Grad-CAM [@selvaraju2017] was applied to KL1 cases misclassified by all four configurations, targeting layer4[-1] for ResNet50 and features[-1] for EfficientNet-B0. Heatmaps were reviewed by the author, a qualified MSK radiographer, for anatomical plausibility, and a central 50% crop localisation score quantified activation within the expected knee joint region [@saporta2022].
 
-All models were trained using the Adam optimiser [@kingma2015] with weight decay 0.0001, selected for its adaptive learning rate properties which make it well suited to fine-tuning pretrained networks. A ReduceLROnPlateau scheduler reduced the learning rate by a factor of 0.1 after 10 epochs without improvement in validation loss, preventing stalled training at plateaus. Early stopping was applied with a patience of 10 epochs, saving the lowest validation loss checkpoint to prevent overfitting. Maximum training was capped at 50 epochs with a batch size of 32, consistent with @momenpour2025.
+# Results
 
-Each of the four configurations was trained across three random seeds (42, 123, 456), yielding 12 training runs, to confirm that observed differences reflect genuine effects of architecture and loss function rather than favourable initialisation. All training was performed on an NVIDIA A100-SXM4-80GB GPU via the Cambridge Service for Data Driven Discovery. All code and reproduction instructions are available at: <https://github.com/tmzendah/HCDS_Mod05>.
+All results are reported as mean ± sample SD across three random seeds on the held-out test set (n=1,656). Statistical comparisons between CE and CORAL used paired t-tests; Wilcoxon signed-rank tests are reported for completeness but lacked sufficient power at n=3 to reach significance. Statistical tests are interpreted as exploratory given n=3; the primary evidence is the consistency of paired differences across seeds, effect size, and clinical magnitude of change. Seeds are not a random sample from a patient population; these tests speak to consistency across initialisations, not generalisation to new data.
 
-### 2.6 Evaluation Metrics
+## Overall Performance
 
-Model performance was evaluated exclusively on the held-out test set (n=1,656), which was not used at any stage during training or model selection, ensuring an unbiased estimate of generalisation performance. Quadratic Weighted Kappa (QWK) served as the primary field-standard metric, penalising distant grade errors proportionally to their clinical severity and enabling direct comparison with published benchmarks [@tiulpin2018; @zhao2024]. KL Grade 1 recall was designated the primary clinical outcome, measuring detection of doubtful OA — the grade with meta-analytic sensitivity of 0.64 across 19 studies [@zhao2024]. Additional metrics included accuracy, weighted F1, macro AUC, balanced accuracy, and per-grade recall for KL0–KL4. All metrics were reported as mean ± SD across three seeds. Paired t-tests compared CE and CORAL conditions within each architecture; Wilcoxon signed-rank tests were also computed but lacked sufficient power at n=3 to reach significance and are reported for completeness.
+EfficientNet-B0 with CORAL loss achieved the highest mean QWK (0.809 ± 0.009), the closest configuration to the 0.81 "almost perfect agreement" threshold [@landis1977]. CORAL loss consistently improved QWK within both architectures: by +0.0183 for ResNet50 (paired t=5.497, p=0.016) and +0.0212 for EfficientNet-B0 (paired t=4.244, p=0.026). Overall accuracy remained comparable across loss functions within each architecture (Table 2), indicating that the QWK improvement reflects a reduction in distant-grade errors rather than a wholesale accuracy gain. Macro AUC was comparable across all four configurations (range 0.875–0.882), consistent with broadly equivalent discriminative capacity regardless of loss function or architecture.
 
-### 2.7 Fairness Considerations
+| Architecture | Loss | QWK | Accuracy | KL1 Recall | Balanced Acc | Macro AUC |
+|---|---|---|---|---|---|---|
+| ResNet50 | CE | 0.782 ± 0.004 | 0.642 ± 0.005 | 0.127 ± 0.013 | 0.611 ± 0.010 | 0.876 ± 0.002 |
+| ResNet50 | CORAL | 0.800 ± 0.005 | 0.631 ± 0.010 | 0.341 ± 0.023 | 0.615 ± 0.018 | 0.875 ± 0.005 |
+| EfficientNet-B0 | CE | 0.787 ± 0.002 | 0.652 ± 0.007 | 0.190 ± 0.021 | 0.616 ± 0.015 | 0.879 ± 0.004 |
+| EfficientNet-B0 | CORAL | 0.809 ± 0.009 | 0.631 ± 0.010 | 0.354 ± 0.011 | 0.609 ± 0.016 | 0.882 ± 0.005 |
 
-The Kaggle dataset contains no demographic metadata, precluding subgroup-level fairness analysis. This is a recognised limitation for clinical deployment, where performance disparities across age, sex, race, and acquisition type are a known concern in medical imaging AI [@obermeyer2019]. The MRKR dataset [@price2024emorykneeradiographmrkr] was identified as a candidate for fairness evaluation but domain shift arising from bilateral image acquisition precluded valid inference without retraining. Fairness analysis is designated as a priority for future work.
+: Table 2. Core evaluation metrics across all four configurations (held-out test set, n=1,656). Values are reported as mean ± sample SD across three seeds. Accuracy is computed from per-class recall weighted by test set class frequencies. Macro AUC derived as the mean of per-grade one-vs-rest AUC scores.
 
-### 2.8 Explainability
+All models converged within 50 epochs; EfficientNet configurations displayed marginally faster convergence and lower final validation loss compared to ResNet50 across both loss functions.
 
-Grad-CAM [@selvaraju2017] was applied to interpret model attention during KL1 misclassification, targeting layer4[-1] for ResNet50 and features[-1] for EfficientNet-B0. Cases misclassified by all four configurations on the same test image were identified as shared misclassification cases, representing the hardest KL1 examples in the dataset. Heatmaps were reviewed by a qualified MSK radiographer (the author) to assess anatomical plausibility — whether activation concentrated on clinically relevant structures including the medial joint space, osteophyte margins, and subchondral bone, or on anatomically implausible regions such as the femoral shaft or image borders. A quantitative localisation score measured the proportion of activation within the central 50% crop, consistent with calls for quantitative XAI evaluation in the KL grading literature [@teoh2023].
+@fig-confusion presents the confusion matrices on the held-out test set, illustrating the redistribution of classification errors under CORAL compared to CE.
 
-## 3. Results
+![Confusion matrices for all four configurations on the held-out test set (n=1,656), shown for the best seed per configuration (selected by lowest validation loss). CORAL redistributes errors toward adjacent grades compared to CE.](../results/confusion_matrices.png){#fig-confusion fig-alt="Confusion matrices" width="100%"}
 
-All results are reported as mean ± SD across three random seeds on the held-out test set (n=1,656). Statistical comparisons between CE and CORAL used paired t-tests; Wilcoxon signed-rank tests are reported for completeness but lacked sufficient power at n=3 to reach significance.
+## KL Grade 1 Recall (Primary Clinical Outcome)
 
-### 3.1 Overall Performance
+KL1 recall showed the most clinically consequential differences across conditions (@fig-kl1). CE loss produced critically low KL1 recall in both architectures: ResNet50+CE achieved 0.127 ± 0.013 and EfficientNet+CE achieved 0.190 ± 0.021, well below the meta-analytic benchmark of 0.64 [@zhao2025dl]. CORAL loss produced substantial and consistent improvements: ResNet50+CORAL reached 0.341 ± 0.023 (+168% relative increase; paired t=10.534, p=0.004) and EfficientNet+CORAL reached 0.354 ± 0.011 (+86% relative increase; paired t=27.368, p=0.001). Despite this improvement, all configurations remained below the meta-analytic benchmark, indicating that ordinal loss is necessary but insufficient to fully resolve KL1 detection failure on this dataset.
 
-EfficientNet-B0 with CORAL loss achieved the highest mean QWK (0.8085 ± 0.0075), the only configuration to exceed the 0.81 "almost perfect" clinical benchmark [@landis1977]. @fig-metrics presents the full performance metrics across all four configurations. CORAL loss consistently improved QWK within both architectures: by +0.0183 for ResNet50 (paired t=5.497, p=0.016) and +0.0212 for EfficientNet-B0 (paired t=4.244, p=0.026). Overall accuracy remained comparable across loss functions within each architecture, indicating that the QWK improvement reflects a reduction in distant-grade errors rather than a wholesale accuracy gain.
+![KL Grade 1 recall comparison between CE and CORAL loss for ResNet50 and EfficientNet-B0 (mean ± SD, three seeds). Dashed line indicates meta-analytic benchmark of 0.64 [@zhao2025dl]. CORAL loss improved KL1 recall by 86–168% relative to CE across both architectures.](../results/kl1_recall_comparison.png){#fig-kl1 fig-alt="KL1 recall comparison between loss functions" width="100%"}
 
-![Summary of performance metrics across all four configurations (mean ± SD, three seeds). EfficientNet-B0 + CORAL achieved the highest QWK, approaching the 0.81 clinical benchmark.](../results/metrics_summary.png){#fig-metrics fig-alt="Performance metrics summary" width="100%"}
+## Per-Grade Recall
 
-Training convergence across all configurations and seeds is shown in @fig-learning-curves. All models converged within 50 epochs; EfficientNet configurations displayed marginally faster convergence and lower final validation loss compared to ResNet50 across both loss functions.
+Per-grade recall profiles revealed a consistent pattern across all configurations (@fig-per-grade). KL0 recall was highest under CE loss (ResNet50+CE: 0.865 ± 0.034; EfficientNet+CE: 0.863 ± 0.021) but declined under CORAL (ResNet50+CORAL: 0.787 ± 0.010; EfficientNet+CORAL: 0.796 ± 0.004), indicating that CORAL redistributes predictive capacity away from the majority class toward intermediate grades. KL1 remained the worst-detected grade across all configurations. KL3 and KL4 showed moderate to good recall (0.53–0.77) across all configurations, suggesting that more advanced disease produces sufficiently discriminative radiographic features. The trade-off between KL0 and KL1 recall under CORAL versus CE is clinically interpretable — CE collapses toward the majority class while CORAL distributes more evenly across the ordinal scale.
 
-![Training loss and accuracy curves across all four configurations and three random seeds. Solid lines show training; dashed lines show validation. Shading represents ± SD across seeds.](../results/learning_curves.png){#fig-learning-curves fig-alt="Learning curves for all configurations" width="100%"}
+![Per-grade recall across all four configurations (mean ± SD, three seeds). KL1 shown in red; dashed line indicates the meta-analytic benchmark of 0.64 [@zhao2025dl]. CORAL loss consistently improves KL1 recall at the cost of modest reduction in KL0 recall.](../results/per_grade_recall.png){#fig-per-grade fig-alt="Per-grade recall bar chart" width="100%"}
 
-@fig-qwk shows the QWK distribution across seeds for all configurations, and @fig-confusion presents the confusion matrices on the held-out test set, illustrating the redistribution of classification errors under CORAL compared to CE.
+## Model Stability
 
-![Quadratic Weighted Kappa across all four configurations (mean ± SD, three seeds). CORAL loss improved QWK within both architectures; EfficientNet-B0 + CORAL was the top-performing configuration.](../results/qwk_comparison.png){#fig-qwk fig-alt="QWK comparison across configurations" width="100%"}
+All configurations demonstrated low variability across seeds. QWK SD ranged from 0.002 (EfficientNet+CE) to 0.009 (EfficientNet+CORAL), and KL1 recall SD ranged from 0.011 (EfficientNet+CORAL) to 0.023 (ResNet50+CORAL), confirming that observed differences between loss functions are not attributable to seed-dependent variation. The consistently lower SD for EfficientNet configurations suggests marginally superior training stability compared to ResNet50.
 
-![Confusion matrices for all four configurations on the held-out test set (n=1,656), averaged across three seeds. CORAL redistributes errors toward adjacent grades compared to CE.](../results/confusion_matrices.png){#fig-confusion fig-alt="Confusion matrices" width="100%"}
+## Grad-CAM Explainability Audit
 
-### 3.2 KL Grade 1 Recall (Primary Clinical Outcome)
-
-KL1 recall showed the most clinically consequential differences across conditions (@fig-kl1). CE loss produced critically low KL1 recall in both architectures: ResNet50+CE achieved 0.127 ± 0.012 and EfficientNet+CE achieved 0.190 ± 0.017, well below the meta-analytic benchmark of 0.64 [@zhao2024]. CORAL loss produced substantial and consistent improvements: ResNet50+CORAL reached 0.341 ± 0.019 (+168% relative increase; paired t=10.534, p=0.004) and EfficientNet+CORAL reached 0.354 ± 0.009 (+86% relative increase; paired t=27.368, p=0.001). Despite this improvement, all configurations remained below the meta-analytic benchmark, indicating that ordinal loss is necessary but insufficient to fully resolve KL1 detection failure on this dataset.
-
-![KL Grade 1 recall comparison between CE and CORAL loss for ResNet50 and EfficientNet-B0 (mean ± SD, three seeds). Dashed line indicates meta-analytic benchmark of 0.64 [@zhao2024]. CORAL loss improved KL1 recall by 86–168% relative to CE across both architectures.](../results/kl1_recall_comparison.png){#fig-kl1 fig-alt="KL1 recall comparison between loss functions" width="100%"}
-
-### 3.3 Per-Grade Recall
-
-Per-grade recall profiles revealed a consistent pattern across all configurations (@fig-per-grade). KL0 recall was highest under CE loss (ResNet50+CE: 0.865 ± 0.028; EfficientNet+CE: 0.863 ± 0.017) but declined under CORAL (ResNet50+CORAL: 0.787 ± 0.008; EfficientNet+CORAL: 0.796 ± 0.003), indicating that CORAL redistributes predictive capacity away from the majority class toward intermediate grades. KL1 remained the worst-detected grade across all configurations. KL3 and KL4 showed moderate to good recall (0.53–0.77) across all configurations, suggesting that more advanced disease produces sufficiently discriminative radiographic features. The trade-off between KL0 and KL1 recall under CORAL versus CE is clinically interpretable — CE collapses toward the majority class while CORAL distributes more evenly across the ordinal scale.
-
-![Per-grade recall across all four configurations (mean ± SD, three seeds). KL1 shown in red; dashed line indicates the meta-analytic benchmark of 0.64 [@zhao2024]. CORAL loss consistently improves KL1 recall at the cost of modest reduction in KL0 recall.](../results/per_grade_recall.png){#fig-per-grade fig-alt="Per-grade recall bar chart" width="100%"}
-
-### 3.4 Model Stability
-
-All configurations demonstrated low variability across seeds. QWK SD ranged from 0.002 (EfficientNet+CE) to 0.008 (EfficientNet+CORAL), and KL1 recall SD ranged from 0.009 (EfficientNet+CORAL) to 0.019 (ResNet50+CORAL), confirming that observed differences between loss functions are not attributable to seed-dependent variation. The consistently lower SD for EfficientNet configurations suggests marginally superior training stability compared to ResNet50.
-
-### 3.5 Grad-CAM Explainability Audit
-
-Grad-CAM heatmaps were generated for 125 cases misclassified by all four configurations, with 20 selected for detailed audit. @fig-localisation presents the quantitative localisation scores — measuring activation proportion within the central 50% crop — which were: ResNet50+CE 0.524 ± 0.121, ResNet50+CORAL 0.387 ± 0.206, EfficientNet+CE 0.369 ± 0.090, and EfficientNet+CORAL 0.313 ± 0.259. ResNet50+CE showed significantly higher central activation than ResNet50+CORAL (Wilcoxon W=51.0, p=0.044), though qualitative review revealed this reflected diffuse activation across the joint space rather than targeted attention to diagnostically relevant structures. No significant difference was observed between EfficientNet configurations (W=76.0, p=0.294).
+Grad-CAM heatmaps were generated for 125 cases misclassified by all four configurations, with 20 randomly selected by the evaluation script for detailed audit. Quantitative localisation scores — measuring activation proportion within the central 50% crop — were: ResNet50+CE 0.524 ± 0.121, ResNet50+CORAL 0.387 ± 0.206, EfficientNet+CE 0.369 ± 0.090, and EfficientNet+CORAL 0.313 ± 0.259. ResNet50+CE showed higher central activation than ResNet50+CORAL in this exploratory audit (Wilcoxon W=51.0, p=0.044), although qualitative review suggested this reflected diffuse rather than diagnostically targeted activation. No significant difference was observed between EfficientNet configurations (W=76.0, p=0.294).
 
 Across all 20 audit cases, two predominant error patterns were identified: over-grading to KL2 in 8 cases, where models attended to minor osteophyte margins at the tibial plateau, and under-grading to KL0 in 12 cases, where activation was dispersed or peripherally displaced, failing to attend to subtle joint space narrowing. This pattern is consistent with the radiographic heterogeneity inherent to KL1.
 
-![Quantitative Grad-CAM localisation scores for shared KL1 misclassification cases (n=20 audited) across all four configurations (mean ± SD). Higher scores indicate greater proportion of activation within the central 50% crop. ResNet50+CE showed significantly higher central activation, though qualitative review indicated diffuse rather than clinically targeted attention.](../results/localisation_scores.png){#fig-localisation fig-alt="Grad-CAM localisation scores by configuration" width="100%"}
+# Discussion
 
-## 4. Discussion
+## Effect of Loss Function on KL1 Detection
 
-### 4.1 The Effect of Loss Function on KL1 Detection
+This study shows that loss function choice meaningfully affects early OA detection in automated KL grading. CORAL ordinal loss improved KL1 recall across both architectures and all three seeds, with relative gains of 168% for ResNet50 and 86% for EfficientNet-B0 compared with CE. This is consistent with the structure of the task: KL grading is ordinal, but CE treats grades as independent classes and does not explicitly preserve the relationship between adjacent grades. CORAL instead models ordered rank boundaries, redistributing learning toward clinically important transitions such as KL0 versus KL1 [@cao2020]. The per-grade recall results support this interpretation: CORAL improved KL1 recall while reducing KL0 recall, suggesting a shift away from majority-class normal predictions toward borderline disease detection.
 
-This study demonstrates that loss function choice has a measurable and clinically meaningful effect on KL1 detection in automated knee OA grading. CORAL ordinal loss consistently improved KL1 recall across both architectures and all three seeds, with relative increases of 168% for ResNet50 and 86% for EfficientNet-B0 compared to CE. This finding is mechanistically interpretable: CE treats the KL scale as an unordered set of categories, assigning equal penalty to all misclassifications regardless of grade distance. Under CE, the model has no incentive to attend to the clinically critical boundary between KL0 and KL1 — misclassifying a true KL1 as KL0 is penalised identically to misclassifying it as KL4. CORAL addresses this by encoding the ordinal structure of the KL scale directly into the loss surface, making adjacent-grade errors less costly than distant ones and redistributing gradient signals toward grade boundaries [@cao2020]. The per-grade recall profiles support this interpretation: CORAL consistently reduced KL0 recall while improving KL1 recall, reflecting a redistribution of predictive capacity away from the dominant majority class toward the clinically critical boundary grades. This trade-off is not a limitation — it is the intended consequence of respecting ordinal structure in a grading task.
+## Why KL1 Remains Difficult
 
-### 4.2 Why KL1 Remains Hard
+Despite these gains, all configurations remained below the meta-analytic KL1 sensitivity benchmark of 0.64 [@zhao2025dl], indicating that ordinal loss improves but does not solve early OA detection. Three dataset-level factors are likely responsible.
 
-Despite the improvement conferred by CORAL, all configurations remained substantially below the meta-analytic KL1 benchmark of 0.64 [@zhao2024], suggesting that loss function choice is necessary but insufficient to resolve KL1 detection failure. Three interacting factors likely explain this persistent gap.
+First, the Kaggle dataset lacks acquisition metadata, particularly weight-bearing status, which directly affects apparent joint-space width. A knee that appears normal on a non-weight-bearing film may show measurable narrowing under load, meaning the same patient could produce different KL grades depending on acquisition type alone — label noise that no loss function can resolve.
 
-First, the Kaggle dataset contains no acquisition metadata, meaning the model is trained on a mixture of weight-bearing and non-weight-bearing films without the ability to distinguish between them. This is clinically significant because weight-bearing status directly affects joint space width — the primary radiographic feature at KL1. A joint that appears normal on a supine film may demonstrate measurable narrowing under load, meaning the same patient could produce different KL grades depending solely on acquisition type. The model inherits this variability as label noise, which no loss function can resolve.
+Second, the dataset lacks age and demographic context. As the KL scale was developed in 1957 on a specific population [@kellgren1957], ground truth labels may systematically over-grade elderly patients and under-grade younger ones at the KL1 threshold; without age as a model input, this demographic label noise is invisible to the training pipeline.
 
-Second, the KL scale does not account for age-related normal variation in bone morphology. Small osteophytes that would constitute doubtful OA in a 40-year-old may represent entirely normal age-related change in a 90-year-old. As the scale was developed in 1957 on a specific population [@kellgren1957], ground truth labels in the Kaggle dataset may systematically over-grade elderly patients and under-grade younger ones at the KL1 threshold. Without age as a model input, this demographic label noise is invisible to the training pipeline.
+Third, KL1 is intrinsically heterogeneous — ranging from a single small osteophyte to equivocal joint-space narrowing, representing fundamentally different structural presentations sharing one label. This makes the KL1 decision boundary diffuse and difficult for both human readers and CNNs.
 
-Third, KL1 is intrinsically radiographically heterogeneous — it spans a wide spectrum from a single small osteophyte to equivocal joint space narrowing, representing fundamentally different structural presentations that share a single label. This heterogeneity means the model must learn a highly diffuse decision boundary for KL1, explaining why even CORAL, which improves the loss surface, cannot fully close the gap to the benchmark.
+## Clinical Implications and Trade-offs
 
-### 4.3 Clinical Implications
+CE-based models missed approximately 80–87% of KL1 cases in this test set. CORAL reduced this failure rate, but even the best configuration detected only 35% of KL1 cases — none of the tested models is sufficiently sensitive for independent clinical deployment. The observed trade-off is also important: CORAL improved QWK and KL1 recall at the cost of modestly lower KL0 recall and overall accuracy. This trade-off is consistent with the intended behaviour of ordinal modelling, but its acceptability would depend on clinical context and prospective validation.
 
-These findings have direct implications for clinical deployment. The critically low KL1 recall under CE loss — 0.127 for ResNet50 and 0.190 for EfficientNet — means that a CE-based automated grading system would miss approximately 80–87% of early OA cases. Missing KL1 may delay risk-factor modification, monitoring, or clinical follow-up in symptomatic or high-risk patients. The window for risk-modifying and symptom-management strategies — weight management, physiotherapy, and activity modification — is lost, and the patient may only re-present once structural damage has progressed to an irreversible stage. CORAL loss meaningfully reduces this failure rate, but with KL1 recall still below 0.36, more than 60% of early OA cases would still be missed in clinical deployment.
+Beyond loss function, these results highlight a fundamental limitation of image-only grading systems. A radiographer has access to clinical context unavailable to the model — weight-bearing status, age, symptom history and body habitus all inform the interpretation of borderline radiographic findings. A 90-year-old with small osteophytes presents a different clinical picture from a 45-year-old with identical radiographic appearances. Integrating structured clinical metadata alongside image features is likely a prerequisite for automated grading to reach the sensitivity required for safe clinical deployment at the KL1 threshold.
 
-Beyond loss function, these results highlight a fundamental limitation of image-only grading systems. A radiographer reporting the same film has access to clinical context that the model does not — the patient's age, sex, body mass index, weight-bearing status, and symptom history all inform the interpretation of borderline radiographic findings. A 90-year-old with small osteophytes presents a different clinical picture from a 45-year-old with identical radiographic appearances. Integrating structured clinical metadata alongside image features represents a necessary direction for future development, and is likely a prerequisite for automated grading systems to reach the sensitivity required for safe clinical deployment at the KL1 threshold.
+EfficientNet-B0+CORAL achieved the best overall balance, with the highest QWK and approximately six times fewer parameters than ResNet50 [@tan2019efficientnet; @he2016]. This makes it attractive for deployment on constrained clinical infrastructure. However, the performance difference between architectures was smaller than the difference conferred by loss function choice, suggesting that ordinal modelling is the more important design decision for this task. The three-seed evaluation confirmed that all findings are stable across initialisations, with QWK sample SD ranging from 0.002 to 0.009 across configurations.
 
-### 4.4 Generalisability and Fairness
+## Generalisability, Fairness and Explainability
 
-The absence of demographic metadata in the Kaggle dataset precludes any assessment of whether model performance varies across clinically important subgroups. Performance disparities across age, sex, race, and body habitus are a recognised concern in medical imaging AI [@obermeyer2019], and the arguments above suggest that age in particular may be a significant source of differential performance in KL grading — elderly patients may be systematically over-graded due to age-related normal osteophyte formation, while younger patients with genuine early OA may be under-graded. These disparities would be invisible in aggregate metrics such as QWK and overall accuracy, which is precisely why subgroup analysis is essential before clinical deployment.
+The absence of demographic metadata prevents assessment of performance across age, sex, race or body habitus — aggregate metrics such as QWK may conceal subgroup failure, particularly if KL1 labels are affected by age-related morphology or acquisition differences [@seyyedkalantari2021; @obermeyer2019]. Future work should evaluate whether CORAL's KL1 recall benefit generalises across demographic subgroups using datasets with patient-level metadata, such as MRKR [@price2024emorykneeradiographmrkr], after appropriate retraining.
 
-The MRKR dataset [@price2024emorykneeradiographmrkr] was identified as a candidate for fairness evaluation given its demographic metadata across race, sex, age group, and weight-bearing status. However, domain shift arising from bilateral image acquisition precluded valid inference without retraining on matched data. This represents an important direction for future work — evaluating whether the KL1 detection improvements conferred by CORAL loss are consistent across demographic subgroups, or whether they disproportionately benefit certain populations while leaving others underserved.
+Grad-CAM analysis supported the interpretation that KL1 errors arise from both feature ambiguity and attention failure [@selvaraju2017]. Over-graded cases showed activation near minor osteophyte margins — genuine features misinterpreted in severity. Under-graded cases showed dispersed or peripheral activation, indicating failure to attend to subtle joint-space changes. Quantitative localisation scores were useful but incomplete: higher central activation did not guarantee better clinical localisation, reinforcing the need for expert review alongside numerical XAI metrics [@saporta2022].
 
-### 4.5 Explainability
+Overall, the findings support CORAL as a better loss function for ordinal KL grading, but image-only models remain limited by missing clinical context. Reliable early OA detection will likely require integration of radiographic images with acquisition metadata, demographic variables and prospective clinical validation.
 
-Grad-CAM analysis of shared misclassification cases revealed two predominant attention patterns. In over-grading cases — where true KL1 images were predicted as KL2 — models attended to minor osteophyte margins at the tibial plateau, suggesting the models were detecting genuine radiographic features but misinterpreting their severity. In under-grading cases — where true KL1 images were predicted as KL0 — activation was dispersed or peripherally displaced, indicating failure to attend to the subtle joint space narrowing that characterises early OA. This second pattern is the more clinically concerning, as it represents cases where the model found no relevant features at all rather than misinterpreting ones it detected.
-
-Quantitative localisation scores (@fig-localisation) showed higher central activation for ResNet50+CE compared to ResNet50+CORAL, though this did not reflect superior clinical localisation on qualitative review — higher central scores in CE models reflected diffuse rather than targeted activation. This highlights a limitation of purely quantitative XAI metrics: a high localisation score does not guarantee that the model is attending to diagnostically relevant structures. Radiographer-led qualitative review remains an essential complement to quantitative explainability metrics, particularly for borderline grades where the relevant features are subtle and spatially precise [@teoh2023].
-
-### 4.6 Model Trade-offs
-
-Several practical trade-offs between configurations are worth noting for clinical deployment contexts. CORAL loss consistently improved QWK and KL1 recall but at a modest cost to overall accuracy and KL0 recall compared to CE. This trade-off is clinically acceptable — reducing missed early OA cases is more consequential than marginally lower normal classification accuracy, given the downstream implications of missing KL1 discussed above.
-
-EfficientNet-B0 achieved marginally higher QWK and lower KL1 recall SD than ResNet50 across seeds, suggesting superior training stability, while requiring approximately six times fewer parameters (4 million versus 23.5 million) [@tan2019efficientnet; @he2016]. In a clinical deployment context where models may need to run on local hospital infrastructure rather than high-performance computing, this parameter efficiency is a practically relevant advantage. However, the performance difference between architectures was modest compared to the difference conferred by loss function choice, suggesting that loss function selection is the more impactful design decision for this task.
-
-Finally, the three-seed evaluation demonstrated that all findings are stable across initialisations, with QWK SD ranging from 0.002 to 0.008 across configurations. This stability supports confidence in the observed differences and suggests that the results are unlikely to be attributable to favourable random initialisation.
-
-## 5. Ethical Considerations
+# Ethical Considerations
 
 Automated KL grading systems carry several ethical considerations that must be addressed before clinical deployment. First, and most critically, such systems should function as decision support tools rather than replacements for clinical judgement. The KL1 recall rates reported in this study — even under the best configuration — indicate that no current automated system is sufficiently sensitive to operate independently at the early OA threshold without clinician oversight.
 
@@ -269,10 +170,10 @@ Second, the absence of demographic metadata in the training dataset means that p
 
 Third, transparency and explainability are essential for clinical trust. Grad-CAM provides partial insight into model attention but does not constitute a complete explanation of model decisions. Clinicians relying on automated grading outputs should be informed of the model's known failure modes — particularly its tendency to under-grade KL1 — to support appropriate scepticism when interpreting borderline cases.
 
-Finally, both datasets used in this study are publicly available under open licences and contain no personally identifiable information, satisfying data governance requirements for research use.
+Finally, the dataset used in this study is publicly available under a CC BY 4.0 licence and contains no personally identifiable information, satisfying data governance requirements for research use.
 
-## 6. Conclusion
+# Conclusion
 
-This study demonstrates that loss function choice meaningfully affects early osteoarthritis detection in automated Kellgren-Lawrence grading. CORAL ordinal loss consistently improved KL1 recall by 86–168% compared to categorical cross-entropy across both CNN architectures (ResNet50 and EfficientNet-B0) and three random seeds, while EfficientNet-B0 with CORAL achieved the highest overall QWK of 0.809, exceeding the 0.81 clinical benchmark [@landis1977]. However, all configurations remained below the meta-analytic KL1 sensitivity benchmark, indicating that ordinal loss is necessary but insufficient to fully resolve early OA detection failure. The persistent gap is attributable not only to modelling choices but to fundamental dataset limitations — the absence of acquisition metadata, age-related label noise, and the intrinsic radiographic heterogeneity of KL1. Future work should prioritise integration of clinical metadata, demographic fairness evaluation, and validation on demographically diverse datasets such as MRKR [@price2024emorykneeradiographmrkr] to establish whether these findings generalise to real clinical populations.
+This study demonstrates that loss function choice affects early OA detection in automated KL grading. CORAL ordinal loss improved KL1 recall by 86–168% compared with CE across both architectures and three seeds, while EfficientNet-B0+CORAL achieved the highest overall QWK of 0.809 ± 0.009, approaching the 0.81 "almost perfect agreement" threshold [@landis1977]. However, all models remained below the meta-analytic KL1 benchmark, indicating that ordinal loss is beneficial but insufficient. The remaining gap likely reflects dataset limitations — missing acquisition metadata, absent demographic context, and intrinsic KL1 heterogeneity. Future work should combine ordinal modelling with clinical metadata integration, fairness evaluation and external validation on demographically diverse datasets.
 
-## References
+# References {.unnumbered}
