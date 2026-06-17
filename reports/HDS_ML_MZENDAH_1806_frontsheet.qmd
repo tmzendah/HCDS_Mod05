@@ -61,6 +61,14 @@ I would most like feedback on whether I made a good topic choice and framed the 
 
 I am left wondering whether the CORAL advantage in KL1 recall would persist if clinical metadata such as weight-bearing status and age were included as model inputs, or whether the image-only limitation would dominate regardless of loss function.
 
+3. How have you incorporated feedback from peers and tutors into this assignment?
+
+Peers recommended keeping the methodology focused rather than overextending it. I took this on board and limited the architectural comparison to two CNN models (ResNet50 and EfficientNet-B0), each evaluated against two training objectives (CE and CORAL), which allowed me to analyse the interaction in sufficient depth rather than producing a superficial comparison across many models.
+
+4. How, and to what extent, have you been able to incorporate feedback on previous course work into this assignment?
+
+Following feedback on previous coursework, I focused on completeness and reproducibility, ensuring that my work can be replicated on any machine.
+
 5. Using the wording in the rubric, how would you describe the quality of the different aspects of your work?
 
 I believe this is an excellent and original piece of work that challenges the conventional approach to loss function selection in medical image classification. Rather than accepting categorical cross-entropy as a default, I questioned whether the ordinal structure of the KL scale warranted a different objective, and tested this with a rigorous experimental design. I hope the marker sees this as a thoughtful and clinically grounded contribution.
