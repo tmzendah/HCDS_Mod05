@@ -32,8 +32,8 @@ execute:
 |---|---|
 |Name: Talita|Surname: Mzendah|
 |Submission Date| 18 -- 06 -- 26 |
-|Word Count: whole assignment including codes| 3,680 |
-|Word Count: main body excluding abstract, references and supplementary materials| 2,902 |
+|Word Count: whole assignment including codes| 3,784 |
+|Word Count: main body excluding abstract, references and supplementary materials| 2,961 |
 
 #### Permission to share your assignment {.unnumbered .unlisted}
 
