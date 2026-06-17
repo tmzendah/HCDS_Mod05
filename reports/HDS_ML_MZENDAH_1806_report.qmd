@@ -48,8 +48,6 @@ This study used a 2×2 factorial design comparing two CNN architectures, ResNet5
 
 The Kaggle Knee Osteoarthritis Dataset with Severity Grading [@chen2018knee] was used as the sole dataset for model training and evaluation. It contains 8,260 anteroposterior knee radiographs labelled with KL grades 0–4 [@kellgren1957], organised into predefined train, validation and test folders (n=5,778, 826 and 1,656 respectively; approximately 70/10/20). These splits were retained because patient-level metadata were unavailable, making re-splitting vulnerable to leakage if images from the same patient appeared in multiple partitions. Images were supplied as preprocessed 224×224 single-knee radiographs; no additional resizing, cropping or re-splitting was performed. No ethics approval was required because the dataset is publicly available and contains no personally identifiable information. Class distribution across splits is shown in Table 1. Representative radiographs for each KL grade are provided in Supplementary Figure S3.
 
-{{< pagebreak >}}
-
 | KL Grade | Description | Train (n=5,778) | Validation (n=826) | Test (n=1,656) |
 |---|---|---|---|---|
 | KL0 | Normal | 2,286 (39.6%) | 328 (39.7%) | 639 (38.6%) |
