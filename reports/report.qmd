@@ -161,6 +161,10 @@ Three ethical considerations apply to clinical deployment. First, these systems 
 
 This study demonstrates that loss function choice affects early OA detection in automated KL grading. CORAL ordinal loss improved KL1 recall from 0.127 to 0.341 for ResNet50 and from 0.190 to 0.354 for EfficientNet-B0, while EfficientNet-B0+CORAL achieved the highest overall QWK of 0.809 ± 0.009, approaching the 0.81 "almost perfect agreement" threshold [@landis1977]. However, all models remained below the meta-analytic KL1 benchmark, indicating that ordinal loss is beneficial but insufficient. The remaining gap highlights the need to test whether acquisition metadata, demographic context and clinical variables can improve detection of borderline KL1 appearances. Future work should therefore combine ordinal modelling with clinical metadata integration, fairness evaluation across demographic subgroups, and external validation on datasets such as MRKR that provide patient-level context [@price2024emorykneeradiographmrkr].
 
+# Acknowledgements {.unnumbered}
+
+The training data were sourced from the Kaggle Knee OA Dataset, which is organised from the Osteoarthritis Initiative (OAI). The author thanks Chen Pingjun for making this dataset publicly available via Mendeley Data [@chen2018knee].
+
 # References {.unnumbered}
 
 ::: {#refs}

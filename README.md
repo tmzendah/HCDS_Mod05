@@ -18,9 +18,10 @@ Knee OA grading using the Kellgren-Lawrence scale is ordinal, yet most automated
 
 ## Dataset
 
-**Kaggle Knee Osteoarthritis Dataset with Severity Grading**
+**Kaggle Knee OA Dataset**
 
-- Source: [https://www.kaggle.com/datasets/shashwatwork/knee-osteoarthritis-dataset-with-severity](https://www.kaggle.com/datasets/shashwatwork/knee-osteoarthritis-dataset-with-severity)
+- Source: [https://www.kaggle.com/datasets/tommyngx/kneeoa](https://www.kaggle.com/datasets/tommyngx/kneeoa)
+- Original data: Chen, Pingjun (2018). Knee Osteoarthritis Severity Grading Dataset. Mendeley Data, V1. doi: 10.17632/56rmx5bjcr.1. Organised from the Osteoarthritis Initiative (OAI).
 - Licence: CC BY 4.0
 - Size: 8,260 anteroposterior knee radiographs, KL grades 0–4
 - Images are supplied as **preprocessed 224×224 single-knee radiographs** — no additional resizing or cropping is required
