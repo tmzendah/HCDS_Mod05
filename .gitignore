@@ -24,7 +24,6 @@ env/
 # ── Quarto ────────────────────────────────────────────────
 .quarto/
 *.quarto_ipynb
-reports/*.html
 reports/*.docx
 
 # ── Credentials ───────────────────────────────────────────
