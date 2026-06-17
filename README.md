@@ -79,13 +79,14 @@ Both architectures were initialised with ImageNet pretrained weights. Differenti
 ## Repository structure
 
 ```
-configs/    # One YAML per experimental configuration (what was compared)
-src/        # Training, evaluation, Grad-CAM, model and loss definitions (how it was implemented)
-slurm/      # 12 SLURM scripts + submit_all.sh for HPC submission (how to reproduce on GPU cluster)
-results/    # Figures used in the report (what was found)
-docs/       # Reproducibility guide and model cards (how to understand and rerun)
-notebooks/  # Exploratory data analysis and visualisation
-reports/    # Quarto report source (.qmd), references, and rendered output
+configs/        # One YAML per experimental configuration (what was compared)
+src/            # Training, evaluation, Grad-CAM, model and loss definitions (how it was implemented)
+slurm/          # 12 SLURM scripts + submit_all.sh for HPC submission (how to reproduce on GPU cluster)
+results/        # Figures used in the report (what was found)
+docs/           # Reproducibility guide and model cards (how to understand and rerun)
+notebooks/      # Exploratory data analysis and visualisation
+reports/        # Quarto report source (.qmd), references, and rendered output
+supplementary/  # Supplementary figures (learning curves, Grad-CAM grid, KL grade examples)
 ```
 
 ---
