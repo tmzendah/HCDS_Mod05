@@ -27,14 +27,14 @@ Tested on: Python 3.11.15, PyTorch 2.7.1, CUDA 11.8, Linux x86_64.
 
 ## 2. Dataset download
 
-**Kaggle Knee Osteoarthritis Dataset with Severity Grading** — CC BY 4.0
+**Kaggle Knee OA Dataset** (Chen, 2018 / OAI) — CC BY 4.0
 8,260 anteroposterior knee radiographs, KL grades 0–4, pre-split into `train/`, `val/`, `test/`.
 
 ```bash
 pip install kaggle
 # Place kaggle.json in ~/.kaggle/kaggle.json
-kaggle datasets download -d shashwatwork/knee-osteoarthritis-dataset-with-severity
-unzip knee-osteoarthritis-dataset-with-severity.zip -d data/
+kaggle datasets download -d tommyngx/kneeoa
+unzip kneeoa.zip -d data/
 ```
 
 Expected structure after unzip:
@@ -150,5 +150,5 @@ Full per-seed results are in `results/metrics/summary.csv`.
 | Training history | `results/metrics/{run_name}_history.json` | Loss and accuracy per epoch |
 | Grad-CAM figures | `results/gradcam/shared_misclassified/` | Side-by-side comparison figures |
 | Audit scores | `results/gradcam/audit_scores.json` | Quantitative localisation scores |
-| Report figures | `results/` | 7 PNG figures used in report.qmd |
-| Report (Word/HTML) | `reports/` | Rendered via `quarto render report.qmd` |
+| Report figures | `results/` | 7 PNG figures used in HDS_ML_MZENDAH_1806_report.qmd |
+| Report (Word/HTML) | `reports/` | Rendered via `quarto render HDS_ML_MZENDAH_1806_report.qmd` |
