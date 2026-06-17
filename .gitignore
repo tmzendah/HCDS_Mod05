@@ -24,7 +24,10 @@ env/
 # ── Quarto ────────────────────────────────────────────────
 .quarto/
 *.quarto_ipynb
+reports/*.html
 reports/*.docx
+!reports/HDS_ML_MZENDAH_1806_report.docx
+!reports/HDS_ML_MZENDAH_1806_frontsheet.docx
 
 # ── Credentials ───────────────────────────────────────────
 kaggle.json
