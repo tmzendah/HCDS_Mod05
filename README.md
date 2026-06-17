@@ -10,7 +10,7 @@ Knee osteoarthritis (OA) is the most prevalent musculoskeletal condition globall
 
 This project investigates whether loss function choice is a primary driver of KL1 detection failure. Standard categorical cross-entropy (CE) treats KL grades as unordered categories and ignores the ordinal structure of the scale, providing no incentive to attend to grade boundaries. CORAL ordinal loss reformulates grading as rank regression and penalises distant misclassifications more heavily than adjacent ones.
 
-A 2×2 factorial design compared CE and CORAL loss across two CNN architectures (ResNet50 and EfficientNet-B0), trained across three random seeds on the Kaggle Knee OA Dataset (n=8,260 radiographs, KL grades 0–4). CORAL consistently improved KL1 recall by 86–168% relative to CE. EfficientNet-B0 + CORAL achieved the best overall performance (QWK = 0.809 ± 0.008). Despite these gains, all configurations remained below the meta-analytic KL1 benchmark, suggesting that dataset limitations — particularly the absence of acquisition metadata and clinical context — are a fundamental barrier that loss function optimisation alone cannot overcome.
+A 2×2 factorial design compared CE and CORAL loss across two CNN architectures (ResNet50 and EfficientNet-B0), trained across three random seeds on the Kaggle Knee OA Dataset (n=8,260 radiographs, KL grades 0–4). CORAL consistently improved KL1 recall by 86–168% relative to CE. EfficientNet-B0 + CORAL achieved the best overall performance (QWK = 0.809 ± 0.007). Despite these gains, all configurations remained below the meta-analytic KL1 benchmark, suggesting that dataset limitations — particularly the absence of acquisition metadata and clinical context — are a fundamental barrier that loss function optimisation alone cannot overcome.
 
 ---
 
@@ -72,10 +72,24 @@ Both architectures were initialised with ImageNet pretrained weights. Differenti
 
 | Configuration | QWK (mean ± SD) | KL1 Recall (mean ± SD) |
 |---|---|---|
-| ResNet50 + CE | — | 0.127 ± 0.012 |
-| ResNet50 + CORAL | — | 0.341 ± 0.019 (+168%) |
-| EfficientNet-B0 + CE | — | 0.190 ± 0.017 |
-| EfficientNet-B0 + CORAL | **0.809 ± 0.008** | **0.354 ± 0.009** (+86%) |
+| ResNet50 + CE | 0.782 ± 0.003 | 0.127 ± 0.011 |
+| ResNet50 + CORAL | 0.800 ± 0.004 | 0.341 ± 0.019 (+168%) |
+| EfficientNet-B0 + CE | 0.787 ± 0.002 | 0.190 ± 0.017 |
+| EfficientNet-B0 + CORAL | **0.809 ± 0.007** | **0.354 ± 0.009** (+86%) |
+
+---
+
+## Repository structure
+
+```
+configs/    # One YAML per experimental configuration (what was compared)
+src/        # Training, evaluation, Grad-CAM, model and loss definitions (how it was implemented)
+slurm/      # 12 SLURM scripts + submit_all.sh for HPC submission (how to reproduce on GPU cluster)
+results/    # Figures used in the report (what was found)
+docs/       # Reproducibility guide and model cards (how to understand and rerun)
+notebooks/  # Exploratory data analysis and visualisation
+reports/    # Quarto report source (.qmd), references, and rendered output
+```
 
 ---
 

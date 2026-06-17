@@ -20,8 +20,8 @@ Training configuration:
 
 Overfitting controls:
 ---------------------
-    1. Early stopping (patience=7)
-       Stops training if val loss does not improve for 7 epochs.
+    1. Early stopping (patience=10)
+       Stops training if val loss does not improve for 10 epochs.
        Best checkpoint saved automatically.
 
     2. ReduceLROnPlateau (patience=3, factor=0.1)

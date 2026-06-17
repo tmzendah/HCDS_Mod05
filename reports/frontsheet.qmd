@@ -32,8 +32,8 @@ execute:
 |---|---|
 |Name: Talita|Surname: Mzendah|
 |Submission Date| 18 -- 06 -- 26 |
-|Word Count: whole assignment including codes| 3,220 |
-|Word Count: main body excluding abstract, references and supplementary materials| 2,924 |
+|Word Count: whole assignment including codes| 3,680 |
+|Word Count: main body excluding abstract, references and supplementary materials| 2,902 |
 
 #### Permission to share your assignment {.unnumbered .unlisted}
 
@@ -55,11 +55,11 @@ For each of the questions, do not spend too long answering -- keep it brief. For
 
 1. Which aspects of this assignment are you most uncertain about and/or would most like to receive feedback on?
 
-The overall methodological approach, I would like to receive feedback to understand if I have correctly identified the gap and applied knowledge appropriately.
+I would most like feedback on whether I made a good topic choice and framed the problem from the right angle. I feel I may have overestimated the amount of work involved and would appreciate feedback on whether the scope was appropriate, whether the gap I identified was clinically meaningful, and whether my overall view of the problem was well-reasoned.
 
 2. What elements are you left pondering after this assignment that you would like to discuss further?
 
-N/A
+I am left wondering whether the CORAL advantage in KL1 recall would persist if clinical metadata such as weight-bearing status and age were included as model inputs, or whether the image-only limitation would dominate regardless of loss function.
 
 3. How have you incorporated feedback from peers and tutors into this assignment?
 
@@ -71,7 +71,7 @@ Following feedback on previous coursework, I focused on completeness and reprodu
 
 5. Using the wording in the rubric, how would you describe the quality of the different aspects of your work?
 
-I have aimed to address all elements of the rubric systematically. I deliberately structured each section to build depth progressively from dataset and methodology through to results, discussion, and ethical considerations, so that no rubric criterion was left unaddressed.
+I believe this is an excellent and original piece of work that challenges the conventional approach to loss function selection in medical image classification. Rather than accepting categorical cross-entropy as a default, I questioned whether the ordinal structure of the KL scale warranted a different objective, and tested this with a rigorous experimental design. I hope the marker sees this as a thoughtful and clinically grounded contribution.
 
 #### Declaration of the use of generative AI {.unnumbered .unlisted}
 

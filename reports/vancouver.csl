@@ -112,10 +112,6 @@
   </citation>
 
   <bibliography et-al-min="7" et-al-use-first="6" second-field-align="flush">
-    <sort>
-      <key macro="author"/>
-      <key variable="title"/>
-    </sort>
     <layout suffix=".">
       <text variable="citation-number" suffix=". "/>
       <text macro="author" suffix=". "/>
