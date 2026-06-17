@@ -6,7 +6,7 @@
 
 ## Project summary
 
-Knee OA grading using the Kellgren-Lawrence scale is ordinal, yet most automated systems use categorical cross-entropy (CE) which ignores grade order. This study tested whether CORAL ordinal loss improves KL Grade 1 detection compared with CE across two CNN architectures (ResNet50 and EfficientNet-B0), trained on 8,260 knee radiographs across three random seeds. CORAL improved KL1 recall by 86–168% relative to CE, with EfficientNet-B0+CORAL achieving the best overall QWK of 0.809 ± 0.009. Despite this, all configurations remained below the meta-analytic KL1 benchmark of 0.64, suggesting that image-only models are insufficient without clinical metadata such as weight-bearing status and patient age.
+Knee OA grading using the Kellgren-Lawrence scale is ordinal, yet most automated systems use categorical cross-entropy (CE) which ignores grade order. This study tested whether CORAL ordinal loss improves KL Grade 1 detection compared with CE across two CNN architectures (ResNet50 and EfficientNet-B0), trained on 8,260 knee radiographs across three random seeds. CORAL improved KL1 recall from 0.127 to 0.341 for ResNet50 and from 0.190 to 0.354 for EfficientNet-B0, with EfficientNet-B0+CORAL achieving the best overall QWK of 0.809 ± 0.009. Despite this, all configurations remained below the meta-analytic KL1 benchmark of 0.64, suggesting that image-only models are insufficient without clinical metadata such as weight-bearing status and patient age.
 
 ---
 
@@ -69,9 +69,9 @@ Both architectures were initialised with ImageNet pretrained weights. Differenti
 | Configuration | QWK (mean ± SD) | KL1 Recall (mean ± SD) |
 |---|---|---|
 | ResNet50 + CE | 0.782 ± 0.003 | 0.127 ± 0.011 |
-| ResNet50 + CORAL | 0.800 ± 0.004 | 0.341 ± 0.019 (+168%) |
+| ResNet50 + CORAL | 0.800 ± 0.004 | 0.341 ± 0.019 |
 | EfficientNet-B0 + CE | 0.787 ± 0.002 | 0.190 ± 0.017 |
-| EfficientNet-B0 + CORAL | **0.809 ± 0.007** | **0.354 ± 0.009** (+86%) |
+| EfficientNet-B0 + CORAL | **0.809 ± 0.007** | **0.354 ± 0.009** |
 
 ---
 
