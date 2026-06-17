@@ -155,7 +155,7 @@ Grad-CAM analysis supported the interpretation that KL1 errors arise from both f
 
 Overall, the findings support CORAL as a better loss function for ordinal KL grading, but image-only models remain limited by missing clinical context. Reliable early OA detection will likely require integration of radiographic images with acquisition metadata, demographic variables and prospective clinical validation.
 
-Three ethical considerations apply to clinical deployment. First, these systems should serve as decision support, not replacements for clinical judgement. Second, the absence of demographic metadata means subgroup performance disparities remain unquantified, and deploying a system with unknown fairness properties risks codifying existing inequalities [@obermeyer2019]. Third, Grad-CAM provides partial explainability only; clinicians should be aware of the model's tendency to under-grade KL1 when interpreting borderline cases.
+Three ethical considerations apply to clinical deployment. First, these systems should serve as decision support, not replacements for clinical judgement. Second, the absence of demographic metadata means subgroup performance disparities remain unquantified, and deploying a system with unknown fairness properties risks codifying existing inequalities [@obermeyer2019]. International consensus guidelines now identify fairness evaluation as a prerequisite for trustworthy deployment of AI in healthcare [@lekadir2025]. Third, Grad-CAM provides partial explainability only; clinicians should be aware of the model's tendency to under-grade KL1 when interpreting borderline cases.
 
 # Conclusion
 
